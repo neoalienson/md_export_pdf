@@ -7,11 +7,11 @@ authors = [
 ]
 dependencies = [
     "markdown", # For basic Markdown parsing
-    "WeasyPrint", # For HTML to PDF conversion and CSS styling
     "Pygments", # For code highlighting
     "beautifulsoup4", # For HTML manipulation
     "requests", # For fetching external resources like images
     "Pillow", # For image processing
+    "PyMuPDF", # For PDF generation
 ]
 requires-python = ">=3.8"
 readme = "README.md"

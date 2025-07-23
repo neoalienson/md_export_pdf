@@ -1,7 +1,15 @@
 # run_example.py
 
 import os
+import logging
 from markdown_to_pdf.core import MarkdownToPdfConverter
+
+# Configure logging to show DEBUG messages
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Get the logger for the markdown_to_pdf package and set its level to DEBUG
+import markdown_to_pdf
+markdown_to_pdf.logger.setLevel(logging.DEBUG)
 
 # Define file paths
 current_dir = os.path.dirname(os.path.abspath(__file__))

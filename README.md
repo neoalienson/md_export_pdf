@@ -19,7 +19,7 @@ The `markdown-to-pdf` tool processes your Markdown input through several key sta
 graph TD
     A[Markdown Input] --> B[HTML Conversion];
     B --> C[CSS Application];
-    C --> D["PDF Generation (WeasyPrint)"];
+    C --> D["PDF Generation (PyMuPDF)"];
     D --> E[Output PDF];
 ```
 
@@ -32,16 +32,16 @@ graph TD
 3.  **CSS Application**: User-provided and default CSS rules are applied to style the generated HTML.
 4.  **PDF Generation**: The styled HTML document is then rendered into a high-quality PDF using WeasyPrint.
 
-## Why HTML and WeasyPrint?
+## Why HTML and PyMuPDF?
 
 This tool leverages HTML and CSS as an intermediate step for several key reasons:
 
 *   **Rich Styling and Layout**: Markdown is excellent for content structure but lacks robust styling capabilities. By converting to HTML, we can utilize the full power of CSS to control fonts, colors, spacing, margins, and complex page layouts. This allows for highly customizable and professional-looking PDF outputs, far beyond what direct Markdown-to-PDF converters can typically achieve.
 *   **Advanced Features Integration**: Many advanced document features, such as syntax highlighting (Pygments), dynamic Table of Contents generation, and embedding complex diagrams (like Mermaid.js, which renders to images), are natively supported and easily manipulated within the HTML and CSS ecosystem.
-*   **WeasyPrint for High-Quality PDF**: WeasyPrint is a powerful and flexible Python library that excels at rendering HTML and CSS into high-quality PDF documents. It provides:
-    *   **Excellent CSS Paged Media Support**: Crucial for precise control over print-specific layouts, including page breaks, and the dynamic generation of headers, footers, and page numbers using advanced CSS features like counters and running elements.
+*   **PyMuPDF for High-Quality PDF**: PyMuPDF is a powerful and flexible Python library that excels at rendering HTML and CSS into high-quality PDF documents. It provides:
+    *   **Excellent HTML/CSS Rendering**: PyMuPDF's 'Story' feature and `insert_htmlbox` method allow for direct rendering of HTML content with CSS styling, enabling precise control over layout, fonts, and other visual elements.
     *   **Python Native Integration**: As a Python library, it integrates seamlessly into our project, offering a programmatic and reliable way to generate PDFs without relying on external, less controllable command-line tools for the core rendering process.
-    *   **Web Standards Compliance**: By adhering to web standards (HTML/CSS), the tool benefits from the vast ecosystem of web development tools and knowledge for styling and layout.
+    *   **Minimal Dependencies**: PyMuPDF is a self-contained library with minimal external dependencies, making it easy to install and deploy.
 
 ## Installation
 

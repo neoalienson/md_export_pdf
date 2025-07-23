@@ -29,13 +29,14 @@ def main():
     parser.add_argument("--cover-page", help="Path to a Markdown file for the cover page.")
     parser.add_argument("--cover-css", help="Path to a CSS file for cover page styling.")
 
-    parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], help="Set the logging level.")
+    parser.add_argument("--log-level", default="ERROR", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], help="Set the logging level.")
 
     args = parser.parse_args()
 
     # Set logging level based on argument
     logger.setLevel(getattr(logging, args.log_level.upper()))
 
+    logger.debug(f"CLI arguments parsed: {args}")
     logger.info(f"Starting Markdown to PDF conversion for '{args.input_file}'")
     try:
         converter = MarkdownToPdfConverter(

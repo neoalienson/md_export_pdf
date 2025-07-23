@@ -16,7 +16,7 @@ This `markdown-to-pdf` project is a Python tool designed to convert Markdown fil
 
 | Tool Name                       | API Handling Strategy Type                          | Validated |
 |---------------------------------|----------------------------------------------------|-----------|
-| markdown-to-pdf conversion      | N/A (Local file processing, not external API)      | No        |
+| markdown-to-pdf conversion      | Type 1 (PyMuPDF for HTML rendering) | No        |
 | Mermaid.js rendering (via mmdc) | Type 4 (External tool orchestration)               | No        |
 
 This table serves as a reference for current and future development, ensuring that each tool's interaction and error handling approach is aligned with the defined principles.

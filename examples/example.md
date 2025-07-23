@@ -10,7 +10,7 @@ This is a sample Markdown document to demonstrate the `markdown-to-pdf` converte
     - Item 2
 - Code block with syntax highlighting:
 
-```python {title="Hello World Example" linenums="true"}
+```python title="Hello World Example" linenums="true"
 def hello():
     print("Hello, PDF!")
     x = 1 + 2
@@ -41,11 +41,10 @@ Here's a simple paragraph to demonstrate basic text. You can use **bold**, *ital
 
 #### A Sample Table
 
-| Header 1 | Header 2 | Header 3 |
-|----------|----------|----------|
-| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
-| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |
-| Row 3 Col 1 | Row 3 Col 2 | Row 3 Col 3 |
+| A | B |
+|---|---|
+| 1 | 2 |
+| 3 | 4 |
 
 #### Image and Link
 
