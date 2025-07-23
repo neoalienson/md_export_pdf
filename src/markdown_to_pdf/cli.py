@@ -1,7 +1,7 @@
 # src/markdown_to_pdf/cli.py
 
 import argparse
-from .converter import MarkdownToPdfConverter
+from .core import MarkdownToPdfConverter
 
 def main():
     parser = argparse.ArgumentParser(description="Convert Markdown to PDF.")
