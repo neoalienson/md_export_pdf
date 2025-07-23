@@ -34,7 +34,7 @@ def _convert_mermaid_to_image(mermaid_code):
 def convert_markdown_to_html(md_content):
     # Convert Mermaid.js blocks to image placeholders before general Markdown conversion
     def replace_mermaid_block(match):
-        mermaid_code = match.group(1)
+        mermaid_code = match.group(1).strip()
         try:
             image_path = _convert_mermaid_to_image(mermaid_code)
             return f'<p><img src="{image_path}" alt="Mermaid Diagram"></p>'

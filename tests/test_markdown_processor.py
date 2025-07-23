@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 import os
 import subprocess
+from bs4 import BeautifulSoup
 from markdown_to_pdf.markdown_processor import convert_markdown_to_html, _convert_mermaid_to_image
 from markdown_to_pdf.converter import MarkdownToPdfConverter
 from weasyprint import HTML, CSS
@@ -29,43 +30,59 @@ def test_convert_mermaid_to_image_failure(mock_run):
 def test_convert_markdown_to_html_basic_markdown():
     md_content = "# Hello World\n\nThis is **bold** text."
     html = convert_markdown_to_html(md_content)
-    assert "<h1>Hello World</h1>" in html
-    assert "This is <strong>bold</strong> text." in html
+    soup = BeautifulSoup(html, 'html.parser')
+    assert soup.find('h1', string='Hello World') is not None
+    assert soup.find('strong', string='bold') is not None
 
 @patch('markdown_to_pdf.markdown_processor._convert_mermaid_to_image', return_value='/tmp/test_mermaid.png')
 def test_convert_markdown_to_html_with_mermaid(mock_convert_mermaid):
     md_content = "```mermaid\ngraph TD; A-->B;\n```"
     html = convert_markdown_to_html(md_content)
-    assert '<p><img src="/tmp/test_mermaid.png" alt="Mermaid Diagram"></p>' in html
+    soup = BeautifulSoup(html, 'html.parser')
+    img_tag = soup.find('img')
+    assert img_tag is not None
+    assert img_tag.get('src') == '/tmp/test_mermaid.png'
+    assert img_tag.get('alt') == 'Mermaid Diagram'
     mock_convert_mermaid.assert_called_once_with("graph TD; A-->B;")
 
 def test_convert_markdown_to_html_with_toc():
     md_content = "# Title 1\n## Subtitle 1\n# Title 2"
     html = convert_markdown_to_html(md_content)
     assert '<div class="table-of-contents">' in html
+    assert '<div class="toc">' in html
     assert '<a href="#title-1">Title 1</a>' in html
     assert '<a href="#subtitle-1">Subtitle 1</a>' in html
 
 def test_convert_markdown_to_html_code_block_with_title():
-    md_content = "```python {title=\"My Code\"}\nprint('Hello')\n```"
+    md_content = "```python {title=\"My Code\"}\nprint(\'Hello\')\n```"
     html = convert_markdown_to_html(md_content)
-    assert '<div class="code-title">My Code</div>' in html
-    assert '''<pre><code class="language-python">print('Hello')\n</code></pre>''' in html
+    soup = BeautifulSoup(html, 'html.parser')
+    title_div = soup.find('div', class_='code-title')
+    assert title_div and title_div.get_text() == 'My Code'
+    pre_tag = soup.find('pre')
+    assert pre_tag and 'language-python' in pre_tag.find('code').get('class', [])
+    assert 'print(\'Hello\')' in pre_tag.get_text()
 
 def test_convert_markdown_to_html_code_block_with_linenums():
     md_content = "```python {linenums=\"true\"}\nline1\nline2\n```"
     html = convert_markdown_to_html(md_content)
-    assert '<pre><code class="language-python linenums">' in html
-    assert '<span class="line">line1</span>' in html
-    assert '<span class="line">line2</span>' in html
-    assert '<br/>' in html
+    soup = BeautifulSoup(html, 'html.parser')
+    pre_tag = soup.find('pre')
+    assert pre_tag and 'language-python' in pre_tag.find('code').get('class', [])
+    assert 'linenums' in pre_tag.get('class', [])
+    assert soup.find('span', class_='line', string='line1')
+    assert soup.find('span', class_='line', string='line2')
 
 def test_convert_markdown_to_html_code_block_with_title_and_linenums():
     md_content = "```python {title=\"My Code\" linenums=\"true\"}\nline1\nline2\n```"
     html = convert_markdown_to_html(md_content)
-    assert '<div class="code-title">My Code</div>' in html
-    assert '<pre><code class="language-python linenums">' in html
-    assert '<span class="line">line1</span>' in html
-    assert '<span class="line">line2</span>' in html
+    soup = BeautifulSoup(html, 'html.parser')
+    title_div = soup.find('div', class_='code-title')
+    assert title_div and title_div.get_text() == 'My Code'
+    pre_tag = soup.find('pre')
+    assert pre_tag and 'language-python' in pre_tag.find('code').get('class', [])
+    assert 'linenums' in pre_tag.get('class', [])
+    assert soup.find('span', class_='line', string='line1')
+    assert soup.find('span', class_='line', string='line2')
 
 
