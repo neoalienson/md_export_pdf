@@ -20,8 +20,16 @@ def get_stylesheets(css_file, header_css, footer_css, cover_css):
     default_css = """
     @page {
         margin: 1in;
-        @top-center { content: element(header); }
-        @bottom-center { content: element(footer); }
+        @top-center {
+            content: element(header);
+            display: block;
+            width: 100%;
+        }
+        @bottom-center {
+            content: element(footer);
+            display: block;
+            width: 100%;
+        }
     }
     body {
         font-family: sans-serif;
@@ -32,6 +40,12 @@ def get_stylesheets(css_file, header_css, footer_css, cover_css):
     }
     .document-footer {
         position: running(footer);
+    }
+    .document-header > *, .document-footer > * {
+        display: block;
+        width: 100%;
+        margin: 0; /* Remove default margins that might collapse */
+        padding: 0; /* Remove default padding */
     }
     /* Basic styling for code highlighting from Pygments */
     .codehilite pre {
