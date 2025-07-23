@@ -1,0 +1,30 @@
+/* cover.css */
+
+#cover-page {
+    background-color: #f0f8ff; /* AliceBlue */
+    color: #2c3e50; /* Dark blue-gray */
+    font-family: 'Georgia', serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    text-align: center;
+}
+
+#cover-page h1 {
+    font-size: 3em;
+    color: #3498db; /* Peter River */
+    margin-bottom: 0.5em;
+}
+
+#cover-page h2 {
+    font-size: 1.5em;
+    color: #7f8c8d; /* Asbestos */
+    margin-top: 0;
+}
+
+#cover-page p {
+    font-size: 1.1em;
+    line-height: 1.8;
+}

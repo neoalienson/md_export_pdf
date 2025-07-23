@@ -1,0 +1,9 @@
+/* header.css */
+
+.document-header {
+    color: darkgreen;
+    font-weight: bold;
+    text-align: right;
+    border-bottom: 1px solid darkgreen;
+    padding-bottom: 3px;
+}

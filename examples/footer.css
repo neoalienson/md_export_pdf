@@ -1,0 +1,9 @@
+/* footer.css */
+
+.document-footer {
+    color: darkblue;
+    font-style: italic;
+    text-align: left;
+    border-top: 1px solid darkblue;
+    padding-top: 3px;
+}
