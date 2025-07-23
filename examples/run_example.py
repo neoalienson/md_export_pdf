@@ -1,7 +1,7 @@
 # run_example.py
 
 import os
-from markdown_to_pdf.converter import MarkdownToPdfConverter
+from markdown_to_pdf.core import MarkdownToPdfConverter
 
 # Define file paths
 current_dir = os.path.dirname(os.path.abspath(__file__))

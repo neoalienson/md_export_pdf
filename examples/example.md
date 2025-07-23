@@ -28,3 +28,30 @@ graph TD;
 ```
 
 This document will be converted to a PDF with a custom header and footer, and styled using a CSS file.
+
+### More Markdown Elements
+
+Here's a simple paragraph to demonstrate basic text. You can use **bold**, *italic*, and even ***bold and italic*** text.
+
+> This is a blockquote. It can span multiple lines and is often used for citations or emphasized text.
+> - Item 1
+> - Item 2
+
+---
+
+#### A Sample Table
+
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
+| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |
+| Row 3 Col 1 | Row 3 Col 2 | Row 3 Col 3 |
+
+#### Image and Link
+
+Here's an example of an image (using a placeholder):
+
+![Placeholder Image](https://via.placeholder.com/150)
+
+And a link to [Google](https://www.google.com).
+
