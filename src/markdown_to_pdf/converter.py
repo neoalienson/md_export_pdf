@@ -284,6 +284,28 @@ class MarkdownToPdfConverter:
             -webkit-user-select: none;
             user-select: none;
         }
+        /* Table of Contents styling for page numbers */
+        .table-of-contents ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .table-of-contents li {
+            margin-bottom: 0.2em;
+        }
+        .table-of-contents a {
+            display: flex; /* Make the link itself a flex container */
+            justify-content: space-between; /* Space out the text and page number */
+            align-items: baseline;
+            text-decoration: none;
+            color: inherit;
+        }
+        .table-of-contents a::after {
+            content: target-counter(attr(href), page); /* Simplified attr(href) */
+            margin-left: 1em;
+            color: #666;
+            font-size: 0.9em;
+            white-space: nowrap; /* Prevent page number from wrapping */
+        }
         """
         stylesheets.append(CSS(string=default_css))
 
