@@ -78,7 +78,7 @@ class MarkdownToPdfConverter:
         # Insert cover page if provided
         cover_page_html = self._convert_cover_page_to_html()
         if cover_page_html:
-            cover_page_div = soup.new_tag("div", id="cover-page")
+            cover_page_div = soup.new_tag("div", id="cover-page", class_="cover-page")
             cover_page_div.append(BeautifulSoup(cover_page_html, 'html.parser'))
             soup.body.insert(0, cover_page_div)
 
@@ -166,6 +166,10 @@ class MarkdownToPdfConverter:
             page-break-after: always;
             text-align: center;
             padding-top: 20%; /* Adjust as needed for vertical centering */
+        }
+        @page :first {
+            @top-center { content: none; }
+            @bottom-center { content: none; }
         }
         /* Confluence-like code block styling */
         .code-title {

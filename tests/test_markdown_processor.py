@@ -3,6 +3,8 @@ from unittest.mock import patch, MagicMock
 import os
 import subprocess
 from markdown_to_pdf.markdown_processor import convert_markdown_to_html, _convert_mermaid_to_image
+from markdown_to_pdf.converter import MarkdownToPdfConverter
+from weasyprint import HTML, CSS
 
 # Mock subprocess.run for _convert_mermaid_to_image
 @patch('subprocess.run')
