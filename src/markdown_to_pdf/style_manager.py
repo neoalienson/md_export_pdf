@@ -1,21 +1,28 @@
 import os
 from weasyprint import CSS
+from . import logger
 
 def get_stylesheets(css_file, header_css, footer_css, cover_css):
+    logger.debug("Getting stylesheets.")
     stylesheets = []
 
     if css_file and os.path.exists(css_file):
+        logger.debug(f"Adding main CSS file: {css_file}")
         stylesheets.append(CSS(filename=css_file))
 
     if header_css and os.path.exists(header_css):
+        logger.debug(f"Adding header CSS file: {header_css}")
         stylesheets.append(CSS(filename=header_css))
 
     if footer_css and os.path.exists(footer_css):
+        logger.debug(f"Adding footer CSS file: {footer_css}")
         stylesheets.append(CSS(filename=footer_css))
 
     if cover_css and os.path.exists(cover_css):
+        logger.debug(f"Adding cover CSS file: {cover_css}")
         stylesheets.append(CSS(filename=cover_css))
 
+    logger.debug("Adding default CSS.")
     # Add default CSS for basic styling and header/footer positioning
     default_css = """
     @page {

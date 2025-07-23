@@ -2,16 +2,20 @@ import markdown
 from bs4 import BeautifulSoup
 import re
 from . import utils
+from . import logger
 
 def convert_markdown_to_html(md_content):
     # Convert Mermaid.js blocks to image placeholders before general Markdown conversion
+    logger.debug("Starting Mermaid.js block conversion.")
     def replace_mermaid_block(match):
         mermaid_code = match.group(1)
+        logger.debug(f"Found Mermaid block:\n{mermaid_code}")
         try:
             image_path = utils.convert_mermaid_to_image(mermaid_code)
+            logger.info(f"Successfully converted Mermaid block to image: {image_path}")
             return f'<p><img src="{image_path}" alt="Mermaid Diagram"></p>'
         except Exception as e:
-            print(f"Error converting Mermaid diagram: {e}")
+            logger.error(f"Error converting Mermaid diagram: {e}", exc_info=True)
             return f'<pre><code>{mermaid_code}</code></pre>' # Fallback to code block on error
 
     # Regex to find fenced code blocks for mermaid

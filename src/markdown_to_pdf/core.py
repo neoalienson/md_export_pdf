@@ -4,9 +4,11 @@ from . import utils
 from . import html_generator
 from . import template_renderer
 from . import style_manager
+from . import logger
 
 class MarkdownToPdfConverter:
     def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None):
+        logger.debug(f"Initializing MarkdownToPdfConverter with input_file={input_file}, output_file={output_file}, css_file={css_file}")
         self.input_file = input_file
         self.output_file = output_file
         self.css_file = css_file
@@ -20,8 +22,10 @@ class MarkdownToPdfConverter:
         self.cover_css = cover_css
 
     def convert(self):
+        logger.info(f"Starting conversion of '{self.input_file}' to '{self.output_file}'")
         md_content = utils.read_file_content(self.input_file)
         if md_content is None:
+            logger.error(f"Input Markdown file not found: {self.input_file}")
             raise FileNotFoundError(f"Input Markdown file not found: {self.input_file}")
 
         html_content = html_generator.convert_markdown_to_html(md_content)
@@ -46,4 +50,4 @@ class MarkdownToPdfConverter:
         )
 
         html_doc.write_pdf(self.output_file, stylesheets=stylesheets)
-        print(f"Successfully converted '{self.input_file}' to '{self.output_file}'")
+        logger.info(f"Successfully converted '{self.input_file}' to '{self.output_file}'")
