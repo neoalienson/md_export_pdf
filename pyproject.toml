@@ -3,7 +3,7 @@ name = "markdown-to-pdf"
 version = "0.1.0"
 description = "A Python tool to convert Markdown files to PDF with advanced styling and features."
 authors = [
-    { name = "Your Name", email = "your.email@example.com" }
+    { name = "Neo Alienson", email = "neo@01man.com" }
 ]
 dependencies = [
     "markdown", # For basic Markdown parsing
