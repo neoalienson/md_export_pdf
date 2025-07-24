@@ -119,6 +119,7 @@ class MarkdownToPdfConverter:
         main_story = fitz.Story(html=main_html, user_css=combined_css_content)
         more = 1
         page_num = 0
+        total_pages_content = 0 # Initialize total content pages
         while more:
             page_num += 1
             device = writer.begin_page(page_rect)
@@ -142,12 +143,45 @@ class MarkdownToPdfConverter:
                 footer_story.draw(device)
             writer.end_page()
             logger.info(f"Main content rendered on page {page_num}.")
+            total_pages_content = page_num # Update total content pages
         logger.info("All main content rendered across multiple pages using fitz.Story.")
 
         writer.close() # Close the writer to finalize the PDF in BytesIO
 
         # Open the BytesIO content as a Document to save it
         doc = fitz.open("pdf", out_file.getvalue())
+
+        # Post-process to update total page numbers in footer
+        total_pages_final = doc.page_count
+        start_page_offset = 0
+        if cover_page_html: # If a cover page exists, it's the first page and not part of content count
+            total_pages_final -= 1
+            start_page_offset = 1
+
+        for i in range(doc.page_count):
+            page = doc[i]
+            
+            # Skip cover page if it exists and is the current page
+            if cover_page_html and i == 0:
+                continue
+
+            # Calculate the page number for the footer (1-based for content pages)
+            current_content_page_num = i + 1 - start_page_offset
+
+            # Get the footer area (assuming it's at the bottom)
+            footer_rect = fitz.Rect(0, page_rect.height - margin, page_rect.width, page_rect.height)
+            
+            # Redraw footer with correct total pages
+            if footer_html:
+                current_footer_html = footer_html.replace('{page_num}', str(current_content_page_num))
+                current_footer_html = current_footer_html.replace('{total_pages}', str(total_pages_final))
+                
+                # Clear the old footer content by drawing a white rectangle over it
+                page.draw_rect(footer_rect, color=(1,1,1), fill=(1,1,1))
+
+                # Insert the new footer HTML with updated page numbers
+                page.insert_htmlbox(footer_rect, current_footer_html, css=combined_css_content)
+
         try:
             doc.save(self.output_file)
         except Exception as e:
