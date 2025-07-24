@@ -72,33 +72,45 @@ class MarkdownToPdfConverter:
         for css_string in all_stylesheets:
             combined_css_content += css_string + "\n"
 
-        doc = fitz.open()  # new PDF document
+        import io # Added import for BytesIO
+
+        out_file = io.BytesIO()
+        writer = fitz.DocumentWriter(out_file)
         margin = 72  # 1 inch margin (72 points per inch)
+        page_rect = fitz.paper_rect("A4") # Assuming A4 paper size for consistency
+        content_rect = page_rect + (margin, margin, -margin, -margin) # Apply margins
 
         # Render cover page if exists
         if cover_page_html:
-            cover_page = doc.new_page()
-            r_cover = cover_page.rect
-            r_cover.x0 += margin
-            r_cover.y0 += margin
-            r_cover.x1 -= margin
-            r_cover.y1 -= margin
-            cover_page.insert_htmlbox(r_cover, cover_page_html, css=combined_css_content)
+            cover_story = fitz.Story(html=cover_page_html, user_css=combined_css_content)
+            device = writer.begin_page(page_rect)
+            cover_story.place(content_rect)
+            cover_story.draw(device)
+            writer.end_page()
             logger.info("Cover page rendered.")
 
-        # Render main content
-        main_page = doc.new_page()
-        r_main = main_page.rect
-        r_main.x0 += margin
-        r_main.y0 += margin
-        r_main.x1 -= margin
-        r_main.y1 -= margin
-        main_page.insert_htmlbox(r_main, main_html, css=combined_css_content)
-        logger.info("Main content rendered.")
+        # Render main content using fitz.Story for proper pagination
+        main_story = fitz.Story(html=main_html, user_css=combined_css_content)
+        more = 1
+        page_num = 0
+        while more:
+            page_num += 1
+            device = writer.begin_page(page_rect)
+            more, _ = main_story.place(content_rect)
+            main_story.draw(device)
+            writer.end_page()
+            logger.info(f"Main content rendered on page {page_num}.")
+        logger.info("All main content rendered across multiple pages using fitz.Story.")
 
+        writer.close() # Close the writer to finalize the PDF in BytesIO
+
+        # Open the BytesIO content as a Document to save it
+        doc = fitz.open("pdf", out_file.getvalue())
         try:
             doc.save(self.output_file)
         except Exception as e:
             logger.error(f"Error converting HTML to PDF with PyMuPDF: {e}")
             raise
+        finally:
+            doc.close() # Ensure the document is closed
         logger.info(f"Successfully converted '{self.input_file}' to '{self.output_file}'")
