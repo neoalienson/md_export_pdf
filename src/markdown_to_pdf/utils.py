@@ -17,10 +17,7 @@ def read_file_content(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-        # If it's a markdown file, convert to HTML
-        if file_path.lower().endswith(('.md', '.markdown')):
-            logger.info(f"Converting markdown file to HTML: {file_path}")
-            return markdown.markdown(content)
+            return content
         logger.info(f"Read file content (assuming HTML or plain text): {file_path}")
         return content # Assume HTML or plain text
     except Exception as e:

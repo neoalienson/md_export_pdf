@@ -6,35 +6,6 @@ from . import logger
 
 def convert_markdown_to_html(md_content):
     logger.info("Starting Markdown to HTML conversion.")
-    # Store extracted attributes for post-processing
-    # extracted_code_attrs = {} # No longer needed as attributes are directly embedded
-    # code_block_counter = 0 # No longer needed
-
-    # Regex to find fenced code blocks and extract language and attributes
-    # This regex is designed to capture attributes directly on the fence line
-    def preprocess_code_block(match):
-        lang = match.group(1).strip()
-        attrs_str = match.group(2).strip() if match.group(2) else ""
-        code_content = match.group(3)
-
-        current_attrs = {}
-        # Parse title attribute
-        title_match = re.search(r'title="([^"]*)', attrs_str)
-        if title_match:
-            current_attrs['title'] = title_match.group(1)
-            logger.debug(f"Found code block title: {current_attrs['title']}")
-
-        # Parse linenums attribute
-        if 'linenums="true"' in attrs_str:
-            current_attrs['linenums'] = 'true'
-            logger.debug("Found linenums attribute.")
-
-        # Return the modified code block without attributes for markdown processing
-        # We add a special marker to identify this block later
-        return f'''```{lang} {{id="{block_id}"}}
-{code_content}
-```'''
-
     # Convert Mermaid.js blocks to image placeholders before general Markdown conversion
     logger.debug("Starting Mermaid.js block conversion.")
     def replace_mermaid_block(match):
@@ -51,11 +22,6 @@ def convert_markdown_to_html(md_content):
     # Regex to find fenced code blocks for mermaid
     md_content = re.sub(r'''```mermaid\n(.*?)\n```''', replace_mermaid_block, md_content, flags=re.DOTALL)
     logger.debug("Mermaid.js block conversion complete.")
-
-    # Apply preprocessing to other code blocks (excluding mermaid)
-    logger.debug("Applying preprocessing to other code blocks (excluding mermaid).")
-    # Modified regex to exclude 'mermaid' language blocks
-    md_content = re.sub(r'''```(?!mermaid)(\w+)(?:\s+([^\n]*))?\n(.*?)\n```''', preprocess_code_block, md_content, flags=re.DOTALL)
 
     logger.debug("Performing basic Markdown to HTML conversion.")
     md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc', 'attr_list', 'tables'])
@@ -74,41 +40,41 @@ def convert_markdown_to_html(md_content):
         # Check if the pre_tag is part of a codehilite block
         highlight_div = pre_tag.find_parent('div', class_='highlight')
         if highlight_div:
-            # Retrieve attributes using the unique ID
-            block_id = highlight_div.get('id') # Assuming the ID is on the highlight_div
-            if block_id and block_id in extracted_code_attrs:
-                attrs = extracted_code_attrs[block_id]
-                logger.debug(f"Processing code block with ID: {block_id} and attributes: {attrs}")
+            # The attr_list extension should have already applied attributes.
+            # We can now directly check for them on the highlight_div or pre_tag.
 
-                # Handle code block title
-                if 'title' in attrs:
-                    title_text = attrs['title']
-                    title_div = soup.new_tag('div', class_='code-title')
-                    title_div.string = title_text
-                    highlight_div.insert_before(title_div) # Insert before the highlight div
-                    logger.debug(f"Added title '{title_text}' to code block.")
+            # Handle code block title
+            # The attr_list extension adds attributes directly to the HTML element.
+            # We need to check if a 'title' attribute was present in the markdown.
+            # Markdown with attr_list would render something like:
+            # <div class="highlight" title="Hello World Example">...</div>
+            title_text = highlight_div.get('title')
+            if title_text:
+                title_div = soup.new_tag('div', class_='code-title')
+                title_div.string = title_text
+                title_div.insert_before(highlight_div) # Insert before the highlight div
+                logger.debug(f"Added title '{title_text}' to code block.")
 
-                # Handle line numbers
-                if attrs.get('linenums') == 'true':
-                    pre_tag['class'] = pre_tag.get('class', []) + ['linenums']
-                    logger.debug("Added linenums class to code block.")
+            # Handle line numbers
+            # The attr_list extension would add a class like 'linenums' if specified.
+            if 'linenums' in highlight_div.get('class', []):
+                pre_tag['class'] = pre_tag.get('class', []) + ['linenums']
+                logger.debug("Added linenums class to code block.")
 
-                    # Wrap each line in a span for CSS line numbering
-                    code_tag = pre_tag.find('code')
-                    if code_tag and code_tag.string:
-                        lines = code_tag.string.splitlines()
-                        new_code_content = soup.new_tag('code')
-                        for line in lines:
-                            line_span = soup.new_tag('span', class_='line')
-                            line_span.string = line
-                            new_code_content.append(line_span)
-                            new_code_content.append(soup.new_tag('br')) # Add line break
-                        # Remove the last <br> if it's there
-                        if new_code_content.contents and new_code_content.contents[-1].name == 'br':
-                            new_code_content.contents.pop()
-                        code_tag.replace_with(new_code_content)
-                        logger.debug("Wrapped code lines with span for numbering.")
+                # Wrap each line in a span for CSS line numbering
+                code_tag = pre_tag.find('code')
+                if code_tag and code_tag.string:
+                    lines = code_tag.string.splitlines()
+                    new_code_content = soup.new_tag('code')
+                    for line in lines:
+                        line_span = soup.new_tag('span', class_='line')
+                        line_span.string = line
+                        new_code_content.append(line_span)
+                        new_code_content.append(soup.new_tag('br')) # Add line break
+                    # Remove the last <br> if it's there
+                    if new_code_content.contents and new_code_content.contents[-1].name == 'br':
+                        new_code_content.contents.pop()
+                    code_tag.replace_with(new_code_content)
+                    logger.debug("Wrapped code lines with span for numbering.")
     logger.info("Markdown to HTML conversion completed.")
     return str(soup)
-
-    logger.debug("Performing basic Markdown to HTML conversion.")

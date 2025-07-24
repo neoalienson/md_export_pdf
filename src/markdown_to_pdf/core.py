@@ -29,7 +29,6 @@ class MarkdownToPdfConverter:
             logger.error(f"Input Markdown file not found: {self.input_file}")
             raise FileNotFoundError(f"Input Markdown file not found: {self.input_file}")
         logger.debug(f"Markdown content read from {self.input_file}")
-
         html_content = html_generator.convert_markdown_to_html(md_content)
         logger.debug("Markdown converted to HTML.")
 
