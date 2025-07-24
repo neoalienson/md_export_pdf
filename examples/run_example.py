@@ -40,7 +40,8 @@ try:
         header_css=header_css_file,
         footer_file=footer_file,
         footer_css=footer_css_file,
-        cover_page_file=cover_page_file
+        cover_page_file=cover_page_file,
+        cover_css=cover_css_file
     )
     converter_with_cover.convert()
     print("Conversion with cover page complete!")

@@ -51,7 +51,13 @@ def convert_mermaid_to_image(mermaid_code):
         if result.stderr:
             logger.warning(f"mmdc stderr: {result.stderr}")
         logger.info(f"Mermaid conversion successful. Image saved to: {png_path}")
-        return png_path
+
+        # Read the PNG file and encode it to Base64
+        import base64
+        with open(png_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+        logger.debug(f"Encoded PNG to Base64: {png_path}")
+        return f"data:image/png;base64,{encoded_string}"
     except subprocess.CalledProcessError as e:
         logger.error(f"Error running mmdc: {e}", exc_info=True)
         logger.error(f"Stdout: {e.stdout}")
@@ -61,7 +67,10 @@ def convert_mermaid_to_image(mermaid_code):
         logger.error(f"An unexpected error occurred during Mermaid conversion: {e}", exc_info=True)
         raise
     finally:
-        # Clean up temporary .mmd file
+        # Clean up temporary .mmd and .png files
         if mmd_path and os.path.exists(mmd_path):
             os.remove(mmd_path)
             logger.debug(f"Cleaned up temporary Mermaid input file: {mmd_path}")
+        if png_path and os.path.exists(png_path):
+            os.remove(png_path)
+            logger.debug(f"Cleaned up temporary Mermaid output PNG file: {png_path}")

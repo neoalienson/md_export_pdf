@@ -14,7 +14,7 @@ def convert_markdown_to_html(md_content):
         try:
             image_path = utils.convert_mermaid_to_image(mermaid_code)
             logger.info(f"Successfully converted Mermaid block to image: {image_path}")
-            return f'<p><img src="{image_path}" alt="Mermaid Diagram"></p>'
+            return f'<p><img src="{image_path}" alt="Mermaid Diagram"/></p>'
         except Exception as e:
             logger.error(f"Error converting Mermaid diagram: {e}", exc_info=True)
             return f'<pre><code>{mermaid_code}</code></pre>' # Fallback to code block on error
