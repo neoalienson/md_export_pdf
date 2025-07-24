@@ -27,3 +27,4 @@ Thumbs.db
 *.pdf
 *.png # For temporary Mermaid.js images
 *.mmd # For temporary Mermaid.js input files
+*.html
