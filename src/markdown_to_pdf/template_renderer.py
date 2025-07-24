@@ -5,7 +5,7 @@ import markdown
 
 def apply_html_template(html_content, header_content, header_file, footer_content, footer_file, cover_page_file):
     logger.info("Applying HTML template to generate final HTML structure.")
-    # Create a basic HTML structure for WeasyPrint
+    # Create a basic HTML structure
     # Include dedicated divs for header and footer that are always present
     template_html = f"""
     <!DOCTYPE html>

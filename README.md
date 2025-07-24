@@ -30,7 +30,7 @@ graph TD
     *   **Table of Contents**: A clickable Table of Contents is generated and prepended to the main document HTML.
     *   **Code Block Styling**: Code blocks are processed to support Confluence-like titles and line numbers.
 3.  **CSS Application**: User-provided and default CSS rules are applied to style the generated HTML.
-4.  **PDF Generation**: The styled HTML document is then rendered into a high-quality PDF using WeasyPrint.
+4.  **PDF Generation**: The styled HTML document is then rendered into a high-quality PDF using PyMuPDF.
 
 ## Why HTML and PyMuPDF?
 
