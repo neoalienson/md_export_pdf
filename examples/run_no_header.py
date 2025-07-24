@@ -1,3 +1,5 @@
+# run_no_header.py
+
 import os
 import logging
 from markdown_to_pdf.core import MarkdownToPdfConverter
@@ -28,22 +30,22 @@ header_css_file = os.path.join(current_dir, "header.css")
 footer_file = os.path.join(current_dir, "footer.md")
 footer_css_file = os.path.join(current_dir, "footer.css")
 
-# --- Conversion with Cover Page ---
-output_pdf_file_with_cover = os.path.join(current_dir, "example_with_cover.pdf")
-print(f"Converting '{input_md_file}' to '{output_pdf_file_with_cover}' (with cover page)...")
+# --- Conversion without Header ---
+output_pdf_file_no_header = os.path.join(current_dir, "example_no_header.pdf")
+print(f"Converting '{input_md_file}' to '{output_pdf_file_no_header}' (without header)...")
 try:
-    converter_with_cover = MarkdownToPdfConverter(
+    converter_no_header = MarkdownToPdfConverter(
         input_file=input_md_file,
-        output_file=output_pdf_file_with_cover,
+        output_file=output_pdf_file_no_header,
         css_file=css_file,
-        header_file=header_file,
+        header_file=None, # Explicitly set to None for no header
         header_css=header_css_file,
         footer_file=footer_file,
         footer_css=footer_css_file,
         cover_page_file=cover_page_file
     )
-    converter_with_cover.convert()
-    print("Conversion with cover page complete!")
-    print(f"You can find the generated PDF at: {output_pdf_file_with_cover}")
+    converter_no_header.convert()
+    print("Conversion without header complete!")
+    print(f"You can find the generated PDF at: {output_pdf_file_no_header}")
 except Exception as e:
-    print(f"An error occurred during conversion with cover page: {e}")
+    print(f"An error occurred during conversion without header: {e}")
