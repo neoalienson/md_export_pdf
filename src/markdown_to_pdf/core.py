@@ -47,13 +47,39 @@ class MarkdownToPdfConverter:
         # Generate main content HTML
         main_html = template_renderer.apply_html_template(
             html_content=html_content,
-            header_content=self.header_content,
-            header_file=self.header_file,
-            footer_content=self.footer_content,
-            footer_file=self.footer_file,
+            header_content=None,
+            header_file=None,
+            footer_content=None,
+            footer_file=None,
             cover_page_file=None  # Cover page handled separately
         )
         logger.debug("Main HTML template applied.")
+
+        # Prepare header HTML
+        header_html = ""
+        if self.header_content:
+            header_html = self.header_content
+        elif self.header_file:
+            header_md_content = utils.read_file_content(self.header_file)
+            if header_md_content:
+                md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc', 'attr_list', 'tables'])
+                header_html = md.convert(header_md_content)
+                logger.info("Header HTML generated.")
+            else:
+                logger.warning(f"Header file not found or empty: {self.header_file}")
+
+        # Prepare footer HTML
+        footer_html = ""
+        if self.footer_content:
+            footer_html = self.footer_content
+        elif self.footer_file:
+            footer_md_content = utils.read_file_content(self.footer_file)
+            if footer_md_content:
+                md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc', 'attr_list', 'tables'])
+                footer_html = md.convert(footer_md_content)
+                logger.info("Footer HTML generated.")
+            else:
+                logger.warning(f"Footer file not found or empty: {self.footer_file}")
 
         # Debug: Save main_html to a temporary file
         debug_html_path = self.output_file.replace(".pdf", ".debug.html")
@@ -98,6 +124,22 @@ class MarkdownToPdfConverter:
             device = writer.begin_page(page_rect)
             more, _ = main_story.place(content_rect)
             main_story.draw(device)
+
+            # Draw header and footer on each page
+            if header_html:
+                header_story = fitz.Story(html=header_html, user_css=combined_css_content)
+                header_story.place(fitz.Rect(0, 0, page_rect.width, margin))
+                header_story.draw(device)
+
+            if footer_html:
+                # Replace placeholders for page numbering
+                current_footer_html = footer_html.replace('{page_num}', str(page_num))
+                # total_pages will be updated after all pages are rendered
+                current_footer_html = current_footer_html.replace('{total_pages}', '{total_pages_placeholder}')
+
+                footer_story = fitz.Story(html=current_footer_html, user_css=combined_css_content)
+                footer_story.place(fitz.Rect(0, page_rect.height - margin, page_rect.width, page_rect.height))
+                footer_story.draw(device)
             writer.end_page()
             logger.info(f"Main content rendered on page {page_num}.")
         logger.info("All main content rendered across multiple pages using fitz.Story.")

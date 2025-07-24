@@ -15,11 +15,9 @@ def apply_html_template(html_content, header_content, header_file, footer_conten
         <title>Markdown to PDF</title>
     </head>
     <body>
-        <div id="pdf-header" class="document-header"></div>
         <div class="content">
             {html_content}
         </div>
-        <div id="pdf-footer" class="document-footer"></div>
     </body>
     </html>
     """
@@ -42,38 +40,7 @@ def apply_html_template(html_content, header_content, header_file, footer_conten
         soup.body.insert(0, cover_page_div)
         logger.info("Cover page successfully added.")
 
-    # Populate header content
-    header_html_content = header_content
-    if header_file:
-        logger.debug(f"Checking for header file: {header_file}")
-        file_content = utils.read_file_content(header_file)
-        if file_content is not None:
-            header_html_content = file_content
-        else:
-            logger.warning(f"Header file not found or empty: {header_file}")
-
-    if header_html_content:
-        logger.info("Adding header content.")
-        soup.find(id="pdf-header").append(BeautifulSoup(header_html_content, 'html.parser'))
-
-    # Populate footer content with page number placeholders
-    footer_html_content = footer_content
-    if footer_file:
-        logger.debug(f"Checking for footer file: {footer_file}")
-        file_content = utils.read_file_content(footer_file)
-        if file_content is not None:
-            footer_html_content = file_content
-        else:
-            logger.warning(f"Footer file not found or empty: {footer_file}")
-
-    if footer_html_content:
-        logger.info("Adding footer content.")
-        # Replace placeholders for page numbering
-        footer_html = footer_html_content.replace('{page_num}', '<span class="page-number"></span>')
-        footer_html = footer_html.replace('{total_pages}', '<span class="total-pages"></span>')
-
-        footer_element = soup.find(id="pdf-footer")
-        footer_element.append(BeautifulSoup(footer_html, 'html.parser'))
+    
 
     logger.info("HTML template application complete.")
     return str(soup)

@@ -6,20 +6,20 @@ This `markdown-to-pdf` project is a Python tool designed to convert Markdown fil
 
 - **Markdown to PDF Conversion:** The primary function is to take a Markdown file and produce a PDF.
 - **Styling:** Users can provide a CSS file for custom styling.
-- **Headers/Footers:** Headers and footers can be specified either directly as content or from a Markdown/HTML file. They also support independent CSS styling and dynamic page numbering.
+- **Headers/Footers:** Headers and footers can be specified either directly as content or from a Markdown/HTML file. A key requirement is that these headers and footers must appear on *every* content page of the generated PDF, not just the first or last. They also support independent CSS styling and dynamic page numbering, including placeholders for current page number and total pages.
 - **Table of Contents:** Automatically generates a clickable Table of Contents.
 - **Cover Page:** Supports adding a cover page from a separate Markdown file, which can also be styled via CSS using the `--cover-css` option.
 - **Code Blocks:** Supports code syntax highlighting with Confluence-like titles and line numbers.
 - **Mermaid.js Support:** The tool automatically renders Mermaid.js code blocks into images. This relies on the `mmdc` (Mermaid CLI) tool being installed and accessible in the system's PATH. You can install it via `npm install -g @mermaid-js/mermaid-cli`.
 
-## API Handling Strategies and Error Handling Table
+## Feature Handling Strategies and Requirements
 
-| Tool Name                       | API Handling Strategy Type                          | Validated |
-|---------------------------------|----------------------------------------------------|-----------|
-| markdown-to-pdf conversion      | Type 1 (PyMuPDF for HTML rendering) | No        |
-| Mermaid.js rendering (via mmdc) | Type 4 (External tool orchestration)               | No        |
+This project implements the following features with specific handling strategies:
 
-This table serves as a reference for current and future development, ensuring that each tool's interaction and error handling approach is aligned with the defined principles.
+- **Markdown to PDF Conversion:** This is the core functionality, handled using PyMuPDF for HTML rendering (Type 1 strategy). This feature has been validated.
+- **Mermaid.js Rendering:** Mermaid.js code blocks are rendered into images via the `mmdc` (Mermaid CLI) tool, which is an external tool orchestration (Type 4 strategy). This feature is not yet validated.
+
+These strategies ensure that each feature's interaction and error handling approach aligns with the defined principles.
 
 ## Instructions for Gemini CLI
 
