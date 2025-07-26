@@ -19,16 +19,6 @@ class MarkdownToPdfConverter:
         self.footer_css = footer_css
         self.cover_page_file = cover_page_file
         self.cover_css = cover_css
-        self.input_file = input_file
-        self.output_file = output_file
-        self.css_file = css_file
-        self.header_content = header_content
-        self.header_file = header_file
-        self.header_css = header_css
-        self.footer_content = footer_content
-        self.footer_file = footer_file
-        self.footer_css = footer_css
-        self.cover_page_file = cover_page_file
 
     def _read_file_content(self, file_path):
         if not file_path or not os.path.exists(file_path):
@@ -113,6 +103,11 @@ class MarkdownToPdfConverter:
         md_content = self._read_markdown()
         html_content = convert_markdown_to_html(md_content)
         final_html = self._apply_html_template(html_content)
+
+        # Debug: Save main_html to a temporary file
+        debug_html_path = "debug.html"
+        with open(debug_html_path, "w", encoding="utf-8") as f:
+            f.write(final_html)
 
         # Convert HTML to PDF using WeasyPrint
         html_doc = HTML(string=final_html, base_url=os.path.dirname(self.input_file))
