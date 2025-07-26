@@ -15,10 +15,7 @@ def example_md_content():
     with open(example_md_path, 'r', encoding='utf-8') as f:
         return f.read()
 
-@pytest.fixture
-def example_html_soup(example_md_content):
-    html_output = convert_markdown_to_html(example_md_content)
-    return BeautifulSoup(html_output, 'html.parser')
+
 
 def test_general_structure_conversion(example_html_soup):
     # Assertions for general structure

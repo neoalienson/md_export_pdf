@@ -50,9 +50,9 @@ Here's a simple paragraph to demonstrate basic text. You can use **bold**, *ital
 
 Here's an example of an image (using a placeholder):
 
-![Placeholder Image](https://via.placeholder.com/150)
+![Placeholder Image](./hkopenai.png)
 
-And a link to [Google](https://www.google.com).
+And a link to [HKOpenAI](https://github.com/hkopenai).
 
 # Lorem ipsum
 
