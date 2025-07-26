@@ -20,7 +20,7 @@ def preprocess_markdown_for_code_blocks(md_content):
     # Group 2: python
     # Group 3: {title="Hello World" linenums="true"} or just "title"
     # Group 4: code
-    code_block_pattern = re.compile(r'^(```)(\w+)\s*(.*)?\n(.*?)\n^```\s*$', re.MULTILINE | re.DOTALL)
+    code_block_pattern = re.compile(r'^(```)(\w+)\s*(.*)?\n(.*?)\n^```\s*', re.MULTILINE | re.DOTALL)
 
     processed_content_parts = []
     last_end = 0
@@ -96,28 +96,5 @@ def convert_markdown_to_html(md_content):
     # Re-parse HTML after prepending TOC to ensure BeautifulSoup sees the complete structure
     soup = BeautifulSoup(html, 'html.parser')
 
-    # Embed local images as data URIs
-    _embed_local_images(soup)
-
     logger.info("Markdown to HTML conversion completed.")
     return str(soup)
-
-def _embed_local_images(soup):
-    logger.debug("Starting embedding of local images.")
-    for img_tag in soup.find_all('img'):
-        src = img_tag.get('src')
-        if src and not src.startswith(('http://', 'https://', 'data:')):
-            # Assuming relative paths are relative to the current working directory
-            # or a specified base path. For simplicity, let's assume CWD for now.
-            # A more robust solution might involve passing a base_path to the converter.
-            absolute_image_path = os.path.abspath(src)
-            if os.path.exists(absolute_image_path):
-                data_uri = utils.image_to_data_uri(absolute_image_path)
-                if data_uri:
-                    img_tag['src'] = data_uri
-                    logger.debug(f"Embedded local image {src} as data URI.")
-                else:
-                    logger.warning(f"Failed to convert image {src} to data URI.")
-            else:
-                logger.warning(f"Local image file not found: {absolute_image_path}")
-    logger.debug("Completed embedding of local images.")
