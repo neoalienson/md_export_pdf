@@ -74,3 +74,31 @@ def convert_mermaid_to_image(mermaid_code):
         if png_path and os.path.exists(png_path):
             os.remove(png_path)
             logger.debug(f"Cleaned up temporary Mermaid output PNG file: {png_path}")
+
+def image_to_data_uri(image_path):
+    logger.debug(f"Attempting to convert image to data URI: {image_path}")
+    if not os.path.exists(image_path):
+        logger.warning(f"Image file not found: {image_path}")
+        return None
+    try:
+        import base64
+        # Determine MIME type based on file extension
+        mime_type_map = {
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".gif": "image/gif",
+            ".svg": "image/svg+xml",
+            ".webp": "image/webp",
+            ".bmp": "image/bmp"
+        }
+        ext = os.path.splitext(image_path)[1].lower()
+        mime_type = mime_type_map.get(ext, "application/octet-stream") # Default to generic binary
+
+        with open(image_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+        logger.info(f"Successfully converted image {image_path} to data URI.")
+        return f"data:{mime_type};base64,{encoded_string}"
+    except Exception as e:
+        logger.error(f"Error converting image {image_path} to data URI: {e}", exc_info=True)
+        return None

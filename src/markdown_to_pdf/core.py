@@ -84,10 +84,10 @@ class MarkdownToPdfConverter:
                 logger.warning(f"Footer file not found or empty: {self.footer_file}")
 
         # Debug: Save main_html to a temporary file
-        debug_html_path = self.output_file.replace(".pdf", ".debug.html")
-        with open(debug_html_path, "w", encoding="utf-8") as f:
-            f.write(main_html)
-        logger.info(f"Debug HTML saved to: {debug_html_path}")
+        # debug_html_path = self.output_file.replace(".pdf", ".debug.html")
+        # with open(debug_html_path, "w", encoding="utf-8") as f:
+        #     f.write(main_html)
+        # logger.info(f"Debug HTML saved to: {debug_html_path}")
 
         # Load CSS content
         all_stylesheets = style_manager.get_stylesheets(

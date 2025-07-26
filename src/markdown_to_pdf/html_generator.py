@@ -1,3 +1,4 @@
+import os
 import markdown
 from bs4 import BeautifulSoup
 import re
@@ -95,44 +96,28 @@ def convert_markdown_to_html(md_content):
     # Re-parse HTML after prepending TOC to ensure BeautifulSoup sees the complete structure
     soup = BeautifulSoup(html, 'html.parser')
 
-    logger.debug("Starting post-processing for Confluence-like code blocks.")
+    # Embed local images as data URIs
+    _embed_local_images(soup)
 
-    # Process code blocks for titles and line numbers
-    for pre_tag in soup.find_all('pre'):
-        highlight_div = pre_tag.find_parent('div', class_='highlight')
-        if highlight_div:
-            # Check for the unique ID we added during pre-processing
-            block_id = pre_tag.get('id') # attr_list applies the ID to the pre tag
-
-            if block_id and block_id in _code_block_metadata:
-                metadata = _code_block_metadata[block_id]
-
-                # Handle code block title
-                if metadata["title"]:
-                    title_div = soup.new_tag('div', class_='code-title')
-                    title_div.string = metadata["title"]
-                    highlight_div.insert_before(title_div)
-                    logger.debug(f"Added title '{metadata["title"]}' to code block.")
-
-                # Handle line numbers
-                if metadata["linenums"]:
-                    pre_tag['class'] = pre_tag.get('class', []) + ['linenums']
-                    logger.debug("Added linenums class to code block.")
-
-                    # Wrap each line in a span for CSS line numbering
-                    code_tag = pre_tag.find('code')
-                    if code_tag and code_tag.string:
-                        lines = code_tag.string.splitlines()
-                        new_code_content = soup.new_tag('code')
-                        for line in lines:
-                            line_span = soup.new_tag('span', class_='line')
-                            line_span.string = line
-                            new_code_content.append(line_span)
-                            new_code_content.append(soup.new_tag('br')) # Add line break
-                        # Remove the last <br> if it's there
-                        if new_code_content.contents and new_code_content.contents[-1].name == 'br':
-                            new_code_content.contents.pop()
-                        code_tag.replace_with(new_code_content)
-                        logger.debug("Wrapped code lines with span for numbering.")
     logger.info("Markdown to HTML conversion completed.")
     return str(soup)
+
+def _embed_local_images(soup):
+    logger.debug("Starting embedding of local images.")
+    for img_tag in soup.find_all('img'):
+        src = img_tag.get('src')
+        if src and not src.startswith(('http://', 'https://', 'data:')):
+            # Assuming relative paths are relative to the current working directory
+            # or a specified base path. For simplicity, let's assume CWD for now.
+            # A more robust solution might involve passing a base_path to the converter.
+            absolute_image_path = os.path.abspath(src)
+            if os.path.exists(absolute_image_path):
+                data_uri = utils.image_to_data_uri(absolute_image_path)
+                if data_uri:
+                    img_tag['src'] = data_uri
+                    logger.debug(f"Embedded local image {src} as data URI.")
+                else:
+                    logger.warning(f"Failed to convert image {src} to data URI.")
+            else:
+                logger.warning(f"Local image file not found: {absolute_image_path}")
+    logger.debug("Completed embedding of local images.")
