@@ -1,5 +1,6 @@
 import pytest
 from markdown_to_pdf.html_generator import convert_markdown_to_html
+from bs4 import BeautifulSoup
 import re
 import os
 
@@ -13,6 +14,11 @@ def example_md_content():
     example_md_path = os.path.join(current_dir, '..', 'examples', 'example.md')
     with open(example_md_path, 'r', encoding='utf-8') as f:
         return f.read()
+
+@pytest.fixture
+def example_html_soup(example_md_content):
+    html_content = convert_markdown_to_html(example_md_content)
+    return BeautifulSoup(html_content, 'html.parser')
 
 
 
@@ -37,7 +43,11 @@ def test_code_block_conversion(example_html_soup):
     assert code_block_with_linenums is not None, "Code block with line numbers not found"
     assert code_block_with_linenums.find('span', class_='line') is not None
 
-def test_image_and_link_conversion(example_html_soup):
+def test_image_conversion(example_html_soup):
     # Assertion for image and link
-    assert example_html_soup.find('img', src='https://via.placeholder.com/150') is not None
-    assert example_html_soup.find('a', href='https://www.google.com', string='Google') is not None
+    assert example_html_soup.find('img', src='./hkopenai.png') is not None
+
+def test_link_conversion(example_html_soup):
+    # Assertion for image and link
+    print(example_html_soup)
+    assert example_html_soup.find('a', href='https://github.com/hkopenai', string='HKOpenAI') is not None
