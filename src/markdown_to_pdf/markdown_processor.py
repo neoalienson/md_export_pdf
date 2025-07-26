@@ -51,7 +51,7 @@ def convert_markdown_to_html(md_content):
 
     # Prepend Table of Contents if generated
     if md.toc:
-        html = f'<div class="table-of-contents">{md.toc}</div><div class="toc-page-break">{html}</div>'
+        html = f'<div class="table-of-contents"><h1>Table of Content</h1>{md.toc}</div><div class="toc-page-break">{html}</div>'
 
     # Post-process HTML for Confluence-like code blocks (titles and line numbers)
     soup = BeautifulSoup(html, 'html.parser')

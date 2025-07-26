@@ -35,4 +35,5 @@ When interacting with this project, consider the following:
     - Missing input files.
     - Invalid CSS file paths.
     - Issues with `mmdc` (e.g., not found, rendering errors).
+    - **WeasyPrint Dependencies (Windows):** If you encounter an `OSError` related to `libgobject-2.0-0` or other missing libraries, you may need to install GTK3 on your system. Refer to the WeasyPrint installation documentation for details: `https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#installation`
 - **Testing:** Use `pytest` to run tests located in the `tests/` directory.
