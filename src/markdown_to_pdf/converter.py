@@ -206,6 +206,9 @@ class MarkdownToPdfConverter:
             list-style: none;
             padding-left: 0;
         }
+        .toc-page-break {
+            page-break-before: always;
+        }
         .table-of-contents li {
             margin-bottom: 0.2em;
             margin-left: 1em;
