@@ -2,6 +2,10 @@
 
 This `markdown-to-pdf` project is a Python tool designed to convert Markdown files into PDF documents. It supports advanced features such as CSS-driven styling, custom headers and footers with page numbering, automatic Table of Contents generation, and conversion of Mermaid.js diagrams into images embedded within the PDF. This tool is specifically designed for **document as code** and **diagram as code** users, aiming for compatibility with document repositories and platforms like Confluence.
 
+## Default Styling
+
+The default CSS styling for the PDF output is now located in `src/markdown_to_pdf/styles/default.css`. This file contains base styles for elements, page numbering, and specific adjustments for code blocks and the Table of Contents.
+
 ## Key Features for Gemini CLI Interaction
 
 - **Markdown to PDF Conversion:** The primary function is to take a Markdown file and produce a PDF.
