@@ -13,6 +13,23 @@
         .document-footer {
             position: running(footer);
         }
+        @page {
+            margin: 1in;
+            @top-center {
+                content: element(header);
+                width: 100%;
+                left: 0;
+                right: 0;
+                margin: 0;
+            }
+            @bottom-center {
+                content: element(footer);
+                width: 100%;
+                left: 0;
+                right: 0;
+                margin: 0;
+            }
+        }
         /* Basic styling for code highlighting from Pygments */
         .codehilite pre {
             background-color: #f8f8f8;
