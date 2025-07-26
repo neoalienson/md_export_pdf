@@ -1,3 +1,5 @@
+[TOC]
+
 # My Example Document
 
 This is a sample Markdown document to demonstrate the `markdown-to-pdf` converter.

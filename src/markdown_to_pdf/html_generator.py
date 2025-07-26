@@ -83,15 +83,9 @@ def convert_markdown_to_html(md_content):
     logger.debug("Markdown pre-processed for code block attributes.")
 
     logger.debug("Performing basic Markdown to HTML conversion.")
-    md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc', 'attr_list', 'tables'], extension_configs={'toc': {'toc_depth': 3, 'anchorlink': True}})
+    md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc', 'attr_list', 'tables'], extension_configs={'toc': {'toc_depth': 4, 'anchorlink': False}})
     html = md.convert(preprocessed_md_content)
     logger.debug("Basic Markdown to HTML conversion complete.")
-
-    # Get the TOC HTML
-    toc_html = md.toc
-    if toc_html:
-        logger.debug("TOC HTML generated. Prepending to main content.")
-        html = toc_html + html
 
     # Re-parse HTML after prepending TOC to ensure BeautifulSoup sees the complete structure
     soup = BeautifulSoup(html, 'html.parser')

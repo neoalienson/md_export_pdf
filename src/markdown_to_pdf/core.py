@@ -44,7 +44,6 @@ class MarkdownToPdfConverter:
                 logger.warning(f"Cover page file not found or empty: {self.cover_page_file}")
 
         # Generate main content HTML
-        # Generate main content HTML
         main_html = template_renderer.apply_html_template(
             html_content=main_html_content,
             header_content=None,
@@ -54,7 +53,6 @@ class MarkdownToPdfConverter:
             cover_page_file=None  # Cover page handled separately
         )
         logger.debug("Main HTML template applied.")
-
 
 
         # Prepare header HTML
@@ -84,10 +82,10 @@ class MarkdownToPdfConverter:
                 logger.warning(f"Footer file not found or empty: {self.footer_file}")
 
         # Debug: Save main_html to a temporary file
-        # debug_html_path = self.output_file.replace(".pdf", ".debug.html")
-        # with open(debug_html_path, "w", encoding="utf-8") as f:
-        #     f.write(main_html)
-        # logger.info(f"Debug HTML saved to: {debug_html_path}")
+        debug_html_path = self.output_file.replace(".pdf", ".debug.html")
+        with open(debug_html_path, "w", encoding="utf-8") as f:
+            f.write(main_html)
+        logger.info(f"Debug HTML saved to: {debug_html_path}")
 
         # Load CSS content
         all_stylesheets = style_manager.get_stylesheets(
@@ -116,8 +114,6 @@ class MarkdownToPdfConverter:
             cover_story.draw(device)
             writer.end_page()
             logger.info("Cover page rendered.")
-
-
 
         # Render main content using fitz.Story for proper pagination
         main_story = fitz.Story(html=main_html, user_css=combined_css_content)
