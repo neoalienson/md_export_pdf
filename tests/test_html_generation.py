@@ -1,6 +1,7 @@
 import pytest
 from markdown_to_pdf.html_generator import convert_markdown_to_html
-from bs4 import BeautifulSoup
+from markdown_to_pdf.mermaid_processor import process_mermaid_blocks
+import re
 import os
 
 # Fixture to read the content of example.md

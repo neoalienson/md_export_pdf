@@ -41,7 +41,7 @@ The conversion from Markdown to HTML is a multi-stage process, with each step ha
 
 1.  **Markdown Input**: The process begins with the raw Markdown content provided by the user.
 
-2.  **Mermaid.js to Image Conversion (Pre-processing in `html_generator.py`)**:
+2.  **Mermaid.js to Image Conversion (Pre-processing in `mermaid_processor.py`)**:
     *   **Purpose**: To convert Mermaid.js code blocks into image data URIs *before* the main Markdown parsing. This prevents `markdown.Markdown` from attempting to process the Mermaid syntax, which it doesn't understand, and simplifies subsequent steps.
     *   **Mechanism**: Uses regex to find `mermaid` fenced code blocks, calls `utils.convert_mermaid_to_image` to generate a base64 encoded image, and replaces the original Mermaid code block with an `<img>` tag containing the data URI.
     *   **Potential Side Effects**: Relies on the `mmdc` (Mermaid CLI) tool being installed and accessible. Errors in `mmdc` execution or image conversion will result in broken image links or fallback to raw code blocks.

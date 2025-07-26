@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 from . import utils
 from . import logger
+from . import mermaid_processor
 
 # Dictionary to store metadata for code blocks
 _code_block_metadata = {}
@@ -74,6 +75,8 @@ def preprocess_markdown_for_code_blocks(md_content):
 def convert_markdown_to_html(md_content):
     logger.info("Starting Markdown to HTML conversion.")
 
+    md_content = mermaid_processor.process_mermaid_blocks(md_content)
+
     # Pre-process markdown to handle custom code block attributes
     preprocessed_md_content = preprocess_markdown_for_code_blocks(md_content)
     logger.debug("Markdown pre-processed for code block attributes.")
@@ -92,7 +95,44 @@ def convert_markdown_to_html(md_content):
     # Re-parse HTML after prepending TOC to ensure BeautifulSoup sees the complete structure
     soup = BeautifulSoup(html, 'html.parser')
 
-    logger.debug("Starting post-processing for Confluence-like code blocks and Mermaid.js.")
-    soup = BeautifulSoup(html, 'html.parser')
+    logger.debug("Starting post-processing for Confluence-like code blocks.")
+
+    # Process code blocks for titles and line numbers
+    for pre_tag in soup.find_all('pre'):
+        highlight_div = pre_tag.find_parent('div', class_='highlight')
+        if highlight_div:
+            # Check for the unique ID we added during pre-processing
+            block_id = pre_tag.get('id') # attr_list applies the ID to the pre tag
+
+            if block_id and block_id in _code_block_metadata:
+                metadata = _code_block_metadata[block_id]
+
+                # Handle code block title
+                if metadata["title"]:
+                    title_div = soup.new_tag('div', class_='code-title')
+                    title_div.string = metadata["title"]
+                    highlight_div.insert_before(title_div)
+                    logger.debug(f"Added title '{metadata["title"]}' to code block.")
+
+                # Handle line numbers
+                if metadata["linenums"]:
+                    pre_tag['class'] = pre_tag.get('class', []) + ['linenums']
+                    logger.debug("Added linenums class to code block.")
+
+                    # Wrap each line in a span for CSS line numbering
+                    code_tag = pre_tag.find('code')
+                    if code_tag and code_tag.string:
+                        lines = code_tag.string.splitlines()
+                        new_code_content = soup.new_tag('code')
+                        for line in lines:
+                            line_span = soup.new_tag('span', class_='line')
+                            line_span.string = line
+                            new_code_content.append(line_span)
+                            new_code_content.append(soup.new_tag('br')) # Add line break
+                        # Remove the last <br> if it's there
+                        if new_code_content.contents and new_code_content.contents[-1].name == 'br':
+                            new_code_content.contents.pop()
+                        code_tag.replace_with(new_code_content)
+                        logger.debug("Wrapped code lines with span for numbering.")
     logger.info("Markdown to HTML conversion completed.")
     return str(soup)
