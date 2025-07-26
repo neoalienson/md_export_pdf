@@ -96,5 +96,15 @@ def convert_markdown_to_html(md_content):
     # Re-parse HTML after prepending TOC to ensure BeautifulSoup sees the complete structure
     soup = BeautifulSoup(html, 'html.parser')
 
+    extracted_links = _extract_links_from_html(soup)
+
     logger.info("Markdown to HTML conversion completed.")
-    return str(soup)
+    return str(soup), extracted_links
+
+def _extract_links_from_html(soup):
+    links = []
+    for a_tag in soup.find_all('a', href=True):
+        href = a_tag['href']
+        text = a_tag.get_text()
+        links.append({'href': href, 'text': text})
+    return links
