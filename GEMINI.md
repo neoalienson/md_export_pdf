@@ -7,7 +7,7 @@ This `markdown-to-pdf` project is a Python tool designed to convert Markdown fil
 - **Markdown to PDF Conversion:** The primary function is to take a Markdown file and produce a PDF.
 - **Styling:** Users can provide a CSS file for custom styling.
 - **Headers/Footers:** Headers and footers can be specified either directly as content or from a Markdown/HTML file. They also support independent CSS styling and dynamic page numbering.
-- **Table of Contents:** Automatically generates a clickable Table of Contents.
+- **Table of Contents:** Automatically generates a clickable Table of Contents with indentation per header level.
 - **Cover Page:** Supports adding a cover page from a separate Markdown file, which can also be styled via CSS using the `--cover-css` option.
 - **Code Blocks:** Supports code syntax highlighting with Confluence-like titles and line numbers.
 - **Mermaid.js Support:** The tool automatically renders Mermaid.js code blocks into images. This relies on the `mmdc` (Mermaid CLI) tool being installed and accessible in the system's PATH. You can install it via `npm install -g @mermaid-js/mermaid-cli`.

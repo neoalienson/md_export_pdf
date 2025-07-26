@@ -208,6 +208,7 @@ class MarkdownToPdfConverter:
         }
         .table-of-contents li {
             margin-bottom: 0.2em;
+            margin-left: 1em;
         }
         .table-of-contents a {
             display: flex; /* Make the link itself a flex container */
