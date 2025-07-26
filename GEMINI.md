@@ -41,27 +41,34 @@ The conversion from Markdown to HTML is a multi-stage process, with each step ha
 
 1.  **Markdown Input**: The process begins with the raw Markdown content provided by the user.
 
-2.  **Pre-processing for Code Block Attributes (`preprocess_markdown_for_code_blocks` in `html_generator.py`)**:
+2.  **Mermaid.js to Image Conversion (Pre-processing in `html_generator.py`)**:
+    *   **Purpose**: To convert Mermaid.js code blocks into image data URIs *before* the main Markdown parsing. This prevents `markdown.Markdown` from attempting to process the Mermaid syntax, which it doesn't understand, and simplifies subsequent steps.
+    *   **Mechanism**: Uses regex to find `mermaid` fenced code blocks, calls `utils.convert_mermaid_to_image` to generate a base64 encoded image, and replaces the original Mermaid code block with an `<img>` tag containing the data URI.
+    *   **Potential Side Effects**: Relies on the `mmdc` (Mermaid CLI) tool being installed and accessible. Errors in `mmdc` execution or image conversion will result in broken image links or fallback to raw code blocks.
+
+3.  **Pre-processing for Code Block Attributes (`preprocess_markdown_for_code_blocks` in `html_generator.py`)**:
     *   **Purpose**: To extract custom attributes (like `title` and `linenums`) from fenced code blocks that `markdown.Markdown`'s `attr_list` extension might not handle directly when on the same line as the language. It also generates unique IDs for these blocks.
     *   **Mechanism**: Uses regex to find code blocks, parses attributes, stores them in a global dictionary (`_code_block_metadata`), and rewrites the Markdown to place a unique ID (e.g., ````{#unique_id}````) on a new line after the closing fence. This ensures `attr_list` can correctly pick up the ID.
-    *   **Potential Side Effects**: This is the most sensitive step. Incorrect regex or Markdown reconstruction can corrupt the Markdown, leading to parsing errors in subsequent steps (e.g., `TypeError` in `fenced_code.py`).
+    *   **Potential Side Effects**: This is a highly sensitive step. Incorrect regex or Markdown reconstruction can corrupt the Markdown, leading to parsing errors in subsequent steps (e.g., `TypeError` in `fenced_code.py`).
 
-3.  **Basic Markdown to HTML Conversion (using `markdown.Markdown` library in `convert_markdown_to_html`)**:
-    *   **Purpose**: To convert the pre-processed Markdown into basic HTML, including syntax highlighting, Table of Contents (TOC) generation, and applying IDs to elements.
-    *   **Mechanism**: Initializes `markdown.Markdown` with extensions (`extra`, `codehilite`, `toc`, `attr_list`, `tables`). `codehilite` handles syntax highlighting, `toc` generates the TOC, and `attr_list` applies the unique IDs (from step 2) to the `<pre>` tags. The generated TOC HTML is prepended to the main HTML content.
-    *   **Potential Side Effects**: Highly dependent on the output of step 2. Malformed Markdown from pre-processing will cause errors or incorrect HTML. Conflicts between extensions can also arise.
+4.  **Basic Markdown to HTML Conversion (using `markdown.Markdown` library in `convert_markdown_to_html`)**:
+    *   **Purpose**: To convert the pre-processed Markdown (now with Mermaid images and attribute IDs) into basic HTML, including syntax highlighting and Table of Contents (TOC) generation.
+    *   **Mechanism**: Initializes `markdown.Markdown` with extensions (`extra`, `codehilite`, `toc`, `attr_list`, `tables`). `codehilite` handles syntax highlighting, `toc` generates the TOC, and `attr_list` applies the unique IDs (from step 3) to the `<pre>` tags. The generated TOC HTML is prepended to the main HTML content.
+    *   **Potential Side Effects**: Highly dependent on the output of step 3. Malformed Markdown from pre-processing will cause errors or incorrect HTML. Conflicts between extensions can also arise.
 
-4.  **Post-processing with BeautifulSoup (remaining logic in `convert_markdown_to_html`)**:
-    *   **Purpose**: To refine the HTML from `markdown.Markdown` and implement specific features like Mermaid.js diagram conversion, and applying titles and line numbers to code blocks.
-    *   **Mechanism**: Parses the HTML using `BeautifulSoup`. It finds Mermaid code blocks, converts them to images, and replaces the original code blocks with `<img>` tags. For other code blocks, it uses the unique IDs (applied in step 3) to retrieve stored `title` and `linenums` metadata and manually inserts title `div`s and wraps code lines in `<span>` tags for line numbering.
-    *   **Potential Side Effects**: Relies on correct HTML structure and presence of unique IDs from previous steps. Issues here will result in incorrect rendering of specific features. External dependency on `mmdc` for Mermaid.js conversion can also cause failures.
+5.  **Post-processing with BeautifulSoup (remaining logic in `convert_markdown_to_html`)**:
+    *   **Purpose**: To refine the HTML from `markdown.Markdown` and implement specific features like applying titles and line numbers to code blocks. (Mermaid.js is already handled in Step 2).
+    *   **Mechanism**: Parses the HTML using `BeautifulSoup`. For code blocks, it uses the unique IDs (applied in step 4) to retrieve stored `title` and `linenums` metadata and manually inserts title `div`s and wraps code lines in `<span>` tags for line numbering.
+    *   **Potential Side Effects**: Relies on correct HTML structure and presence of unique IDs from previous steps. Issues here will result in incorrect rendering of specific features.
 
 ### Priority of Steps:
 
 The steps are highly interdependent, making proper sequencing and error handling crucial.
 
-1.  **Highest Priority: Step 2 (Pre-processing for Code Block Attributes)**: This is the foundation. Any errors here will propagate and break subsequent steps. Ensuring this step correctly transforms Markdown into a format `markdown.Markdown` can reliably process is paramount.
+1.  **Highest Priority: Step 2 (Mermaid.js to Image Conversion)**: This step must occur first to ensure `markdown.Markdown` doesn't attempt to parse Mermaid syntax.
 
-2.  **Second Highest Priority: Step 3 (Basic Markdown to HTML Conversion)**: Once the Markdown input is guaranteed to be valid, ensuring the core `markdown.Markdown` library and its extensions function as expected is vital for generating a correct base HTML structure.
+2.  **Second Highest Priority: Step 3 (Pre-processing for Code Block Attributes)**: This is the foundation for correct code block styling. Any errors here will propagate and break subsequent steps.
 
-3.  **Third Priority: Step 4 (Post-processing with BeautifulSoup)**: This step refines the HTML. While important for features, it depends on the successful completion of the previous steps. Issues here are generally easier to isolate and fix once the earlier stages are stable.
+3.  **Third Highest Priority: Step 4 (Basic Markdown to HTML Conversion)**: Once the Markdown input is properly prepared, ensuring the core `markdown.Markdown` library and its extensions function as expected is vital for generating a correct base HTML structure.
+
+4.  **Fourth Priority: Step 5 (Post-processing with BeautifulSoup)**: This step refines the HTML. While important for features, it depends on the successful completion of the previous steps. Issues here are generally easier to isolate and fix once the earlier stages are stable.
