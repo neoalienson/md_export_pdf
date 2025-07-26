@@ -158,6 +158,17 @@ class MarkdownToPdfConverter:
             total_pages_final -= 1
             start_page_offset = 1
 
+        # Add clickable links
+        for link_info in extracted_links:
+            link_text = link_info['text']
+            link_href = link_info['href']
+            text_instances = doc[1].search_for(link_text)
+            for inst in text_instances:
+                # Ensure the found text instance is within the content area
+                if content_rect.intersects(inst):
+                    doc[1].insert_link({"kind": fitz.LINK_URI, "from": inst, "uri": link_href})
+                    logger.debug(f"Added link: {link_href} for text: {link_text} at {inst}")            
+
         for i in range(doc.page_count):
             page = doc[i]
             
@@ -181,17 +192,6 @@ class MarkdownToPdfConverter:
 
                 # Insert the new footer HTML with updated page numbers
                 page.insert_htmlbox(footer_rect, current_footer_html, css=combined_css_content)
-
-            # Add clickable links
-            for link_info in extracted_links:
-                link_text = link_info['text']
-                link_href = link_info['href']
-                text_instances = page.search_for(link_text)
-                for inst in text_instances:
-                    # Ensure the found text instance is within the content area
-                    if content_rect.intersects(inst):
-                        page.insert_link({"kind": fitz.LINK_URI, "from": inst, "uri": link_href})
-                        logger.debug(f"Added link: {link_href} for text: {link_text} at {inst}")
 
         try:
             doc.save(self.output_file)
