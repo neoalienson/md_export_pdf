@@ -3,7 +3,7 @@
 import os
 import pytest
 import fitz # Import fitz for PDF inspection
-from markdown_to_pdf.core import MarkdownToPdfConverter
+from md_export_pdf.converter import MarkdownToPdfConverter
 
 @pytest.fixture
 def temp_markdown_file(tmp_path):

@@ -44,6 +44,7 @@ This project implements a pluggable system for PDF post-processing, allowing for
 -   **`DummyPostProcessor`**: A simple implementation for testing and validation purposes. It performs no actual modifications but logs its execution. It can be enabled using the `--use-dummy-postprocessor` CLI option.
 -   **`DraftWatermarkPostProcessor`**: This post-processor adds a "DRAFT" watermark to each page of the PDF if `draft: true` is present in the Markdown file's front matter.
 -   **`DataClassificationWatermarkPostProcessor`**: This post-processor adds a data classification watermark (CONFIDENTIAL, RESTRICTED, or SECRET) in red to each page of the PDF if `data_classification` is specified in the Markdown file's front matter.
+-   **Metadata from Front Matter**: The converter now extracts `metadata` from the YAML front matter and applies it to the generated PDF's metadata properties. This allows for programmatic control over PDF metadata like author, title, etc.
 
 This modular design allows for easy integration of new PDF manipulation functionalities or alternative libraries in the future.
 

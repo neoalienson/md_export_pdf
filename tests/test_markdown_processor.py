@@ -4,7 +4,7 @@ import os
 import subprocess
 from bs4 import BeautifulSoup
 from md_export_pdf.md_processor.markdown import convert_markdown_to_html
-from markdown_to_pdf.converter import MarkdownToPdfConverter
+from md_export_pdf.converter import MarkdownToPdfConverter
 from weasyprint import HTML, CSS
 
 # Mock subprocess.run for _convert_mermaid_to_image

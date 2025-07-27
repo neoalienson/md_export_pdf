@@ -1,5 +1,5 @@
 import pytest
-from markdown_to_pdf.html_generator import convert_markdown_to_html
+from md_export_pdf.md_processor.markdown import convert_markdown_to_html
 from bs4 import BeautifulSoup
 import re
 import os

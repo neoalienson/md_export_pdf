@@ -2,6 +2,8 @@
 title: front matter
 draft: true
 data_classification: CONFIDENTIAL
+metadata:
+    - author: Neo Alienson <neo@01man.com>
 ---
 
 # My Example Document

@@ -15,6 +15,7 @@ The default CSS styling for the PDF output is now located in `src/md_export_pdf/
 - **Cover Page:** Supports adding a cover page from a separate Markdown file, which can also be styled via CSS using the `--cover-css` option.
 - **Data Classification Watermark:** Adds a watermark (CONFIDENTIAL, RESTRICTED, or SECRET) in red to each page if `data_classification` is specified in the Markdown file's front matter.
 - **Code Blocks:** Supports code syntax highlighting with Confluence-like titles and line numbers.
+- **Metadata from Front Matter:** Extracts `metadata` from the YAML front matter and applies it to the generated PDF's metadata properties (e.g., author, title).
 - **Mermaid.js Support:** The tool automatically renders Mermaid.js code blocks into images. This relies on the `mmdc` (Mermaid CLI) tool being installed and accessible in the system's PATH. You can install it via `npm install -g @mermaid-js/mermaid-cli`.
 
 ## Feature Handling Strategies and Requirements
