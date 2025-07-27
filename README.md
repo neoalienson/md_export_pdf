@@ -39,7 +39,8 @@ md-export-pdf <input_file.md> -o <output_file.pdf> -s <style.css> \
 
 This project implements a pluggable system for PDF post-processing, allowing for flexible modifications to the generated PDF after the initial conversion by WeasyPrint. This system is built around the `PdfPostProcessor` abstract base class, which defines a standard interface for applying modifications.
 
--   **`PyMuPdfPostProcessor`**: This is a concrete implementation that leverages PyMuPDF for tasks like adding headers and footers. It is used when `--use-pymupdf-header` or `--use-pymupdf-footer` options are enabled.
+-   **`PyMuPdfHeaderPostProcessor`**: This is a concrete implementation that leverages PyMuPDF for adding headers. It is used when `--use-pymupdf-header` is enabled.
+-   **`PyMuPdfFooterPostProcessor`**: This is a concrete implementation that leverages PyMuPDF for adding footers. It is used when `--use-pymupdf-footer` is enabled.
 -   **`DummyPostProcessor`**: A simple implementation for testing and validation purposes. It performs no actual modifications but logs its execution. It can be enabled using the `--use-dummy-postprocessor` CLI option.
 
 This modular design allows for easy integration of new PDF manipulation functionalities or alternative libraries in the future.

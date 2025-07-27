@@ -9,7 +9,8 @@ from typing import Optional, Type
 import fitz # Import fitz for PyMuPDF operations
 from md_export_pdf.markdown_processor import convert_markdown_to_html
 from .pdf_postprocessors.base import PdfPostProcessor
-from .pdf_postprocessors.pymupdf import PyMuPdfPostProcessor
+from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
+from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
 from .pdf_postprocessors.dummy import DummyPostProcessor
 
 logger = logging.getLogger(__name__)
@@ -128,60 +129,7 @@ class MarkdownToPdfConverter:
         logger.debug("HTML template application complete. Returning string representation.")
         return str(soup)
 
-    def _add_pymupdf_header_footer(self, pdf_path, header_text, footer_text):
-        logger.debug(f"_add_pymupdf_header_footer called for PDF: {pdf_path}")
-        logger.debug(f"Header text: '{header_text}', Footer text: '{footer_text}'")
-        doc = fitz.open(pdf_path)
-        num_pages = len(doc)
-        logger.debug(f"Total pages in PDF: {num_pages}")
-
-        for i, page in enumerate(doc):
-            logger.debug(f"Processing page {i+1} of {num_pages}")
-            # Skip cover page for header/footer
-            if self.cover_page_file and i == 0:
-                logger.debug(f"Skipping cover page {i+1} for header/footer.")
-                continue
-
-            # Register a standard font for robustness
-            try:
-                # Use a standard base 14 font like Helvetica
-                font_name = "Helvetica"
-                # Ensure the font is available in the PDF
-                # PyMuPDF automatically handles embedding for base 14 fonts
-            except Exception as e:
-                logger.error(f"Error registering font for PyMuPDF: {e}")
-                logger.error(traceback.format_exc())
-                # Fallback or re-raise if font is critical
-
-            # Add header
-            if self.use_pymupdf_header and header_text:
-                logger.debug(f"Attempting to add PyMuPDF header to page {i+1}. Text: '{header_text}'")
-                try:
-                    page.insert_text((50, 50), header_text, fontname="helv", fontsize=10)
-                    logger.debug(f"PyMuPDF header added successfully to page {i+1}.")
-                except Exception as e:
-                    logger.error(f"Error adding PyMuPDF header to page {i+1}: {e}")
-                    import traceback
-                    logger.error(traceback.format_exc())
-
-            # Add footer
-            if self.use_pymupdf_footer and footer_text:
-                logger.debug(f"Attempting to add PyMuPDF footer to page {i+1}. Text: '{footer_text}'")
-                try:
-                    footer_y = page.rect.height - 50
-                    page.insert_text((50, footer_y), footer_text.format(page_num=i + 1, total_pages=num_pages), fontname="helv", fontsize=10)
-                    logger.debug(f"PyMuPDF footer added successfully to page {i+1}.")
-                except Exception as e:
-                    logger.error(f"Error adding PyMuPDF footer to page {i+1}: {e}")
-                    import traceback
-                    logger.error(traceback.format_exc())
-        
-        logger.debug(f"Saving modified PDF to {pdf_path}")
-        temp_output_path = pdf_path + ".tmp"
-        doc.save(temp_output_path)
-        doc.close()
-        os.replace(temp_output_path, pdf_path) # Replace original file with modified one
-        logger.debug(f"PDF saved and replaced successfully.")
+    
 
     def convert(self):
         logger.info(f"Starting PDF conversion for '{self.input_file}' to '{self.output_file}'")
@@ -242,13 +190,21 @@ class MarkdownToPdfConverter:
         logger.debug(f"Footer content: '{self.footer_content}'")
         logger.debug(f"Header file: '{self.header_file}'")
         logger.debug(f"Footer file: '{self.footer_file}'")
-        if (self.use_pymupdf_header and (self.header_content or self.header_file)) or \
-           (self.use_pymupdf_footer and (self.footer_content or self.footer_file)):
-            logger.info("Starting PyMuPDF header/footer post-processing...")
+        if self.use_pymupdf_header and (self.header_content or self.header_file):
+            logger.info("Starting PyMuPDF header post-processing...")
             header_text = self.header_content or (self._read_file_content(self.header_file, markdown_convert=False) if self.header_file else "")
-            footer_text = self.footer_content or (self._read_file_content(self.footer_file, markdown_convert=False) if self.footer_file else "")
-            self._add_pymupdf_header_footer(self.output_file, header_text, footer_text)
-            logger.info("PyMuPDF header/footer post-processing complete.")
+            header_post_processor = PyMuPdfHeaderPostProcessor(self)
+            header_post_processor.apply_modifications(self.output_file, {'header_text': header_text, 'use_header': True})
+            logger.info("PyMuPDF header post-processing complete.")
         else:
-            logger.info("PyMuPDF header/footer post-processing skipped (not toggled or no content).")
+            logger.info("PyMuPDF header post-processing skipped (not toggled or no content).")
+
+        if self.use_pymupdf_footer and (self.footer_content or self.footer_file):
+            logger.info("Starting PyMuPDF footer post-processing...")
+            footer_text = self.footer_content or (self._read_file_content(self.footer_file, markdown_convert=False) if self.footer_file else "")
+            footer_post_processor = PyMuPdfFooterPostProcessor(self)
+            footer_post_processor.apply_modifications(self.output_file, {'footer_text': footer_text, 'use_footer': True})
+            logger.info("PyMuPDF footer post-processing complete.")
+        else:
+            logger.info("PyMuPDF footer post-processing skipped (not toggled or no content).")
 
