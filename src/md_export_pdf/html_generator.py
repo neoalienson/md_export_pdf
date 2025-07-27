@@ -2,9 +2,10 @@ import os
 import markdown
 from bs4 import BeautifulSoup
 import re
-from . import utils
-from . import logger
+import logging
+logger = logging.getLogger(__name__)
 from .md_processor import mermaid
+from .md_processor import front_matter
 
 # Dictionary to store metadata for code blocks
 _code_block_metadata = {}
@@ -76,6 +77,7 @@ def preprocess_markdown_for_code_blocks(md_content):
 def convert_markdown_to_html(md_content):
     logger.info("Starting Markdown to HTML conversion.")
 
+    md_content = front_matter.remove_front_matter(md_content)
     md_content = mermaid.process_mermaid_blocks(md_content)
 
     # Pre-process markdown to handle custom code block attributes

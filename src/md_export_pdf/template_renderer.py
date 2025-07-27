@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from . import utils
-from . import logger
+import logging
+logger = logging.getLogger(__name__)
 import markdown
 
 def apply_html_template(html_content, header_content, header_file, footer_content, footer_file, cover_page_file):

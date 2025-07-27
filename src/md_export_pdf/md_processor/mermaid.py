@@ -1,6 +1,7 @@
 import re
-from . import utils
-from . import logger
+import logging
+logger = logging.getLogger(__name__)
+from .. import utils
 
 def process_mermaid_blocks(markdown_content):
     logger.debug("Starting Mermaid.js block conversion in separate processor.")

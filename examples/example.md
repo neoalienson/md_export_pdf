@@ -1,4 +1,6 @@
-[TOC]
+---
+title: front matter
+---
 
 # My Example Document
 

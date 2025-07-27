@@ -1,6 +1,7 @@
 import os
 
-from . import logger
+import logging
+logger = logging.getLogger(__name__)
 
 def get_stylesheets(css_file, header_css, footer_css, cover_css):
     logger.debug("Getting stylesheets.")

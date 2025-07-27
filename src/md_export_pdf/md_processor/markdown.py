@@ -1,7 +1,9 @@
 import markdown
 from bs4 import BeautifulSoup
-import os
+import logging
+logger = logging.getLogger(__name__)
 import re
+import os
 import tempfile
 import subprocess
 

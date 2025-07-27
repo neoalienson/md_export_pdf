@@ -4,7 +4,8 @@ import re
 import tempfile
 import subprocess
 import shutil
-from . import logger
+import logging
+logger = logging.getLogger(__name__)
 
 def read_file_content(file_path):
     logger.debug(f"Attempting to read file: {file_path}")
