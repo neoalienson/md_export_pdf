@@ -48,7 +48,7 @@ class MarkdownToPdfConverter:
             logger.error(f"Input Markdown file not found: {self.input_file}")
             raise FileNotFoundError(f"Input Markdown file not found: {self.input_file}")
         logger.debug(f"Markdown content read from {self.input_file}")
-        main_html_content, extracted_links = html_generator.convert_markdown_to_html(
+        main_html_content = html_generator.convert_markdown_to_html(
             md_content
         )
         logger.debug("Markdown converted to HTML.")
@@ -196,21 +196,6 @@ class MarkdownToPdfConverter:
         ):  # If a cover page exists, it's the first page and not part of content count
             total_pages_final -= 1
             start_page_offset = 1
-
-        # Add clickable links
-        for link_info in extracted_links:
-            link_text = link_info["text"]
-            link_href = link_info["href"]
-            text_instances = doc[1].search_for(link_text)
-            for inst in text_instances:
-                # Ensure the found text instance is within the content area
-                if content_rect.intersects(inst):
-                    doc[1].insert_link(
-                        {"kind": fitz.LINK_URI, "from": inst, "uri": link_href}
-                    )
-                    logger.debug(
-                        f"Added link: {link_href} for text: {link_text} at {inst}"
-                    )
 
         for i in range(doc.page_count):
             page = doc[i]
