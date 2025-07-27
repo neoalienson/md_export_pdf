@@ -17,9 +17,13 @@ class PyMuPdfFooterPostProcessor(PdfPostProcessor):
             converter_instance.footer_content or converter_instance.footer_file
         )
 
-    def get_process_options(self, converter_instance: Any, front_matter_data: Dict) -> Dict:
+    def get_process_options(
+        self, converter_instance: Any, front_matter_data: Dict
+    ) -> Dict:
         footer_text = converter_instance.footer_content or (
-            converter_instance._read_file_content(converter_instance.footer_file, markdown_convert=False)
+            converter_instance._read_file_content(
+                converter_instance.footer_file, markdown_convert=False
+            )
             if converter_instance.footer_file
             else ""
         )

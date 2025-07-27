@@ -77,6 +77,26 @@ class MarkdownToPdfConverter:
         with open(self.input_file, "r", encoding="utf-8") as f:
             return f.read()
 
+    def _pdf_post_processor(self, front_matter_data):
+        post_processors = [
+            PyMuPdfHeaderPostProcessor,
+            PyMuPdfFooterPostProcessor,
+            DummyPostProcessor,
+            DataClassificationWatermarkPostProcessor,
+            DraftWatermarkPostProcessor,
+            MetadataPostProcessor,
+        ]
+
+        for pp_class in sorted(post_processors, key=lambda x: x(self).priority):
+            pp_instance = pp_class(self)
+            if pp_instance.should_apply(self, front_matter_data):
+                logger.info(f"Applying PDF post-processor: {pp_class.__name__}...")
+                options = pp_instance.get_process_options(self, front_matter_data)
+                pp_instance.process(self.output_file, options)
+                logger.info(f"PDF post-processor {pp_class.__name__} applied.")
+            else:
+                logger.debug(f"PDF post-processor {pp_class.__name__} skipped.")
+
     def _apply_html_template(self, html_content):
         logger.debug("Applying HTML template...")
         # Create a basic HTML structure for WeasyPrint
@@ -168,21 +188,4 @@ class MarkdownToPdfConverter:
             logger.error(traceback.format_exc())
             raise  # Re-raise the exception to stop execution
 
-        post_processors = [
-            PyMuPdfHeaderPostProcessor,
-            PyMuPdfFooterPostProcessor,
-            DummyPostProcessor,
-            DataClassificationWatermarkPostProcessor,
-            DraftWatermarkPostProcessor,
-            MetadataPostProcessor,
-        ]
-
-        for pp_class in sorted(post_processors, key=lambda x: x(self).priority):
-            pp_instance = pp_class(self)
-            if pp_instance.should_apply(self, front_matter_data):
-                logger.info(f"Applying PDF post-processor: {pp_class.__name__}...")
-                options = pp_instance.get_process_options(self, front_matter_data)
-                pp_instance.process(self.output_file, options)
-                logger.info(f"PDF post-processor {pp_class.__name__} applied.")
-            else:
-                logger.debug(f"PDF post-processor {pp_class.__name__} skipped.")
+        self._pdf_post_processor(front_matter_data)

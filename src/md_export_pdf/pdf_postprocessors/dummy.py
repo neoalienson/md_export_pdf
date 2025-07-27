@@ -13,7 +13,9 @@ class DummyPostProcessor(PdfPostProcessor):
     def should_apply(self, converter_instance: Any, front_matter_data: Dict) -> bool:
         return converter_instance.use_dummy_postprocessor
 
-    def get_process_options(self, converter_instance: Any, front_matter_data: Dict) -> Dict:
+    def get_process_options(
+        self, converter_instance: Any, front_matter_data: Dict
+    ) -> Dict:
         return {}
 
     def process(self, pdf_path: str, options: Dict) -> None:

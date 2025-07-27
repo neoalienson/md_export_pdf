@@ -18,7 +18,9 @@ class PdfPostProcessor(BaseProcessor):
         pass
 
     @abstractmethod
-    def get_process_options(self, converter_instance: Any, front_matter_data: Dict) -> Dict:
+    def get_process_options(
+        self, converter_instance: Any, front_matter_data: Dict
+    ) -> Dict:
         """
         Returns a dictionary of options specific to this post-processor.
         """
