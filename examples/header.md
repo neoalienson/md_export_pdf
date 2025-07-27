@@ -1,1 +1,1 @@
-This is a custom header from a Markdown file.
+This is a custom header from a Markdown file. <span class="page-number"></span>

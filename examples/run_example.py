@@ -1,5 +1,3 @@
-# run_example.py
-
 import os
 from markdown_to_pdf.converter import MarkdownToPdfConverter
 
@@ -36,7 +34,12 @@ try:
         footer_file=footer_file,
         footer_css=footer_css_file,
         # Use cover page file and its CSS
-        cover_page_file=cover_page_file
+        cover_page_file=cover_page_file,
+        # Hardcode PyMuPDF usage for header and footer
+        use_pymupdf_header=True,
+        use_pymupdf_footer=True,
+        header_content="My Hardcoded Header", # Example hardcoded header
+        footer_content="Page {page_num} of {total_pages}" # Example hardcoded footer
     )
     converter.convert()
     print("Conversion complete!")

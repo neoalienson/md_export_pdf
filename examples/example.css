@@ -36,11 +36,14 @@ pre {
         content: element(header);
         font-size: 10pt;
         color: #666;
+        background-color: #ffa3a3;        
     }
     @bottom-center {
         content: element(footer);
         font-size: 9pt;
         color: #999;
+        min-height: fit-content; 
+        background-color: #ffa3a3;
     }
 }
 

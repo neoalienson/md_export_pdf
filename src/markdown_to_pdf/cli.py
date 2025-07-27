@@ -26,6 +26,8 @@ def main():
 
     parser.add_argument("--cover-page", help="Path to a Markdown file for the cover page.")
     parser.add_argument("--cover-css", help="Path to a CSS file for cover page styling.")
+    parser.add_argument("--use-pymupdf-header", action="store_true", help="Use PyMuPDF for header generation.")
+    parser.add_argument("--use-pymupdf-footer", action="store_true", help="Use PyMuPDF for footer generation.")
 
     args = parser.parse_args()
 
@@ -40,7 +42,9 @@ def main():
         footer_file=args.footer_file,
         footer_css=args.footer_css,
         cover_page_file=args.cover_page,
-        cover_css=args.cover_css
+        cover_css=args.cover_css,
+        use_pymupdf_header=args.use_pymupdf_header,
+        use_pymupdf_footer=args.use_pymupdf_footer
     )
     converter.convert()
 
