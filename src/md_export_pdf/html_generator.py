@@ -19,12 +19,9 @@ def convert_markdown_to_html(md_content):
     sorted_processors = sorted(MARKDOWN_PREPROCESSOR_PIPELINE, key=lambda p: p.priority)
 
     for processor_instance in sorted_processors:
-        if isinstance(processor_instance, FrontMatterProcessor):
-            current_md_content, front_matter_data = processor_instance.process_markdown(
-                current_md_content
-            )
-        else:
-            current_md_content = processor_instance.process_markdown(current_md_content)
+        processed_content, extracted_data = processor_instance.process_markdown(current_md_content)
+        current_md_content = processed_content
+        front_matter_data.update(extracted_data)
         logger.debug(
             f"Applied Markdown pre-processor: {processor_instance.__class__.__name__}"
         )

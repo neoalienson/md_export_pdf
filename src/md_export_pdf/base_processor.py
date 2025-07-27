@@ -23,5 +23,5 @@ class MarkdownPreprocessor(BaseProcessor):
         super().__init__(priority, ProcessorType.MARKDOWN_PREPROCESSOR)
 
     @abstractmethod
-    def process_markdown(self, md_content: str) -> str:
+    def process_markdown(self, md_content: str) -> tuple[str, dict]:
         pass

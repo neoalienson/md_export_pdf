@@ -15,7 +15,7 @@ class CodeBlockProcessor(MarkdownPreprocessor):
     def process(self, md_content: str) -> str:
         return self.process_markdown(md_content)
 
-    def process_markdown(self, md_content):
+    def process_markdown(self, md_content: str) -> tuple[str, dict]:
         global _code_block_metadata
         _code_block_metadata = {}  # Clear previous metadata
 
@@ -74,4 +74,4 @@ class CodeBlockProcessor(MarkdownPreprocessor):
             last_end = end
 
         processed_content_parts.append(md_content[last_end:])
-        return "".join(processed_content_parts)
+        return "".join(processed_content_parts), {}

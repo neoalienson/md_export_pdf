@@ -13,7 +13,7 @@ class MermaidProcessor(MarkdownPreprocessor):
     def process(self, markdown_content: str) -> str:
         return self.process_markdown(markdown_content)
 
-    def process_markdown(self, markdown_content: str) -> str:
+    def process_markdown(self, markdown_content: str) -> tuple[str, dict]:
         logger.debug("Starting Mermaid.js block conversion in separate processor.")
 
         mermaid_block_pattern = re.compile(r"```mermaid\n(.*?)```", re.DOTALL)
@@ -34,4 +34,4 @@ class MermaidProcessor(MarkdownPreprocessor):
         )
 
         logger.debug("Mermaid.js block conversion complete in separate processor.")
-        return modified_content
+        return modified_content, {}
