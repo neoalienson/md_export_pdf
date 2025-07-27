@@ -1,19 +1,11 @@
 import os
 import logging
-from markdown_to_pdf.core import MarkdownToPdfConverter
-
-# Configure logging to show DEBUG messages
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-# Get the logger for the markdown_to_pdf package and set its level to DEBUG
-import markdown_to_pdf
-markdown_to_pdf.logger.setLevel(logging.DEBUG)
+import md_export_pdf
 import argparse
 import logging
 import sys
 from contextlib import contextmanager
 from md_export_pdf.converter import MarkdownToPdfConverter
-
 from md_export_pdf.logging_config import configure_third_party_logging
 
 @contextmanager
