@@ -9,14 +9,7 @@ from typing import Optional, Type
 import fitz  # Import fitz for PyMuPDF operations
 from .html_generator import convert_markdown_to_html
 from .pdf_postprocessors.base import PdfPostProcessor
-from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
-from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
-from .pdf_postprocessors.dummy import DummyPostProcessor
-from .pdf_postprocessors.data_classification_watermark import (
-    DataClassificationWatermarkPostProcessor,
-)
-from .pdf_postprocessors.draft_watermark import DraftWatermarkPostProcessor
-from .pdf_postprocessors.metadata_postprocessor import MetadataPostProcessor
+from .config import PDF_POSTPROCESSOR_PIPELINE
 from .html_preprocessors.weasyprint_header_footer import apply_weasyprint_header_footer
 from .html_preprocessors.cover_page_processor import apply_cover_page
 
@@ -78,14 +71,7 @@ class MarkdownToPdfConverter:
             return f.read()
 
     def _pdf_post_processor(self, front_matter_data):
-        post_processors = [
-            PyMuPdfHeaderPostProcessor,
-            PyMuPdfFooterPostProcessor,
-            DummyPostProcessor,
-            DataClassificationWatermarkPostProcessor,
-            DraftWatermarkPostProcessor,
-            MetadataPostProcessor,
-        ]
+        post_processors = PDF_POSTPROCESSOR_PIPELINE
 
         for pp_class in sorted(post_processors, key=lambda x: x(self).priority):
             pp_instance = pp_class(self)
