@@ -29,10 +29,10 @@ try:
         output_file=output_pdf_file,
         css_file=css_file,
         # Use header/footer files and their CSS
-        header_file=header_file,
-        header_css=header_css_file,
-        footer_file=footer_file,
-        footer_css=footer_css_file,
+        header_file=None,
+        header_css=None,
+        footer_file=None,
+        footer_css=None,
         # Use cover page file and its CSS
         cover_page_file=cover_page_file,
         # Hardcode PyMuPDF usage for header and footer

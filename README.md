@@ -7,7 +7,7 @@ A Python tool to convert Markdown files to PDF with advanced styling, including 
 - Convert Markdown to PDF
 - CSS-driven styling
 - Custom headers and footers with page numbering
-- Automatic Table of Contents generation
+- Automatic Table of Contents generation: Generates a clickable Table of Contents with indentation per header level, placed on an independent page with a "Table of Content" title.
 - Code syntax highlighting with Confluence-like titles and line numbers
 - Mermaid.js diagram conversion to images
 
@@ -28,8 +28,12 @@ npm install -g @mermaid-js/mermaid-cli
 markdown-to-pdf <input_file.md> -o <output_file.pdf> -s <style.css> \
   [--header "My Document" | --header-file <header.md/html>] [--header-css <header.css>] \
   [--footer "Page {page_num} of {total_pages}" | --footer-file <footer.md/html>] [--footer-css <footer.css>] \
-  [--cover-page <cover_page.md>] [--cover-css <cover.css>]
+  [--cover-page <cover_page.md>] [--cover-css <cover.css>] \
+  [--use-pymupdf-header] [--use-pymupdf-footer]
 ```
+
+**Note on Headers/Footers:** By default, WeasyPrint handles header and footer generation. If `--use-pymupdf-header` and/or `--use-pymupdf-footer` are used, PyMuPDF will be used for the respective element(s). When using PyMuPDF, only plain text content is supported; Markdown formatting will not be rendered.
+
 
 ## Development
 
