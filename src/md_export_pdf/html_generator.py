@@ -28,7 +28,7 @@ def convert_markdown_to_html(md_content):
 
     logger.debug("Performing basic Markdown to HTML conversion.")
     md = markdown.Markdown(
-        extensions=["extra", "codehilite", "toc", "attr_list", "tables"],
+        extensions=["extra", "codehilite", "toc", "attr_list", "tables", "markdown_sub_sup"],
         extension_configs={"toc": {"toc_depth": 4, "anchorlink": False}},
     )
     html = md.convert(current_md_content)

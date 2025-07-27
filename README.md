@@ -8,8 +8,9 @@ A Python tool to convert Markdown files to PDF with advanced styling, including 
 - CSS-driven styling
 - Custom headers and footers with page numbering
 - Automatic Table of Contents generation: Generates a clickable Table of Contents with indentation per header level, placed on an independent page with a "Table of Content" title.
-- Code syntax highlighting with Confluence-like titles and line numbers
-- Mermaid.js diagram conversion to images
+  - Code syntax highlighting with Confluence-like titles and line numbers
+  - Superscript and Subscript support
+  - Mermaid.js diagram conversion to images
 
 ## Installation
 

@@ -41,9 +41,33 @@ This document will be converted to a PDF with a custom header and footer, and st
 
 Here's a simple paragraph to demonstrate basic text. You can use **bold**, *italic*, and even ***bold and italic*** text.
 
-> This is a blockquote. It can span multiple lines and is often used for citations or emphasized text.
+
+1. Item 1
+1. Item 2
+    1. Item 2.1
+    1. Item 2.2
+1. Item 3
+
+> This is a blockquote.
+> It can span multiple lines and is often used for citations or emphasized text.
 > - Item 1
 > - Item 2
+
+~~~
+Code block 
+~~~
+
+sub: H~2~0
+
+sup: x^2^
+
+Marked:	==marked==
+
+~~strikethrough~~
+
+Inline `inline code` code	
+
+Horizontal line:
 
 ---
 
