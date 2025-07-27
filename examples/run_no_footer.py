@@ -5,10 +5,13 @@ import logging
 from markdown_to_pdf.core import MarkdownToPdfConverter
 
 # Configure logging to show DEBUG messages
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # Get the logger for the markdown_to_pdf package and set its level to DEBUG
 import markdown_to_pdf
+
 markdown_to_pdf.logger.setLevel(logging.DEBUG)
 
 # Define file paths
@@ -20,7 +23,7 @@ css_file = os.path.join(current_dir, "example.css")
 
 # Cover page files
 cover_page_file = os.path.join(current_dir, "cover.md")
-cover_css_file = os.path.join(current_dir, "cover.css") # New: Cover page CSS
+cover_css_file = os.path.join(current_dir, "cover.css")  # New: Cover page CSS
 
 # Header files
 header_file = os.path.join(current_dir, "header.md")
@@ -32,7 +35,9 @@ footer_css_file = os.path.join(current_dir, "footer.css")
 
 # --- Conversion without Footer ---
 output_pdf_file_no_footer = os.path.join(current_dir, "example_no_footer.pdf")
-print(f"Converting '{input_md_file}' to '{output_pdf_file_no_footer}' (without footer)...")
+print(
+    f"Converting '{input_md_file}' to '{output_pdf_file_no_footer}' (without footer)..."
+)
 try:
     converter_no_footer = MarkdownToPdfConverter(
         input_file=input_md_file,
@@ -40,9 +45,9 @@ try:
         css_file=css_file,
         header_file=header_file,
         header_css=header_css_file,
-        footer_file=None, # Explicitly set to None for no footer
+        footer_file=None,  # Explicitly set to None for no footer
         footer_css=footer_css_file,
-        cover_page_file=cover_page_file
+        cover_page_file=cover_page_file,
     )
     converter_no_footer.convert()
     print("Conversion without footer complete!")

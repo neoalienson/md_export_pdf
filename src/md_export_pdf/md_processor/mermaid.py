@@ -1,14 +1,16 @@
 import re
 import logging
+
 logger = logging.getLogger(__name__)
 from .. import utils
 
+
 def process_mermaid_blocks(markdown_content):
     logger.debug("Starting Mermaid.js block conversion in separate processor.")
-    
+
     # Regex to find Mermaid code blocks: ```mermaid ... ```
     # It captures the content within the block.
-    mermaid_block_pattern = re.compile(r'```mermaid\n(.*?)```', re.DOTALL)
+    mermaid_block_pattern = re.compile(r"```mermaid\n(.*?)```", re.DOTALL)
 
     def replace_mermaid_block(match):
         mermaid_code = match.group(1)
@@ -21,9 +23,11 @@ def process_mermaid_blocks(markdown_content):
         except Exception as e:
             logger.error(f"Error converting Mermaid diagram: {e}", exc_info=True)
             # Fallback to original code block if conversion fails
-            return match.group(0) # Keep the original markdown block
+            return match.group(0)  # Keep the original markdown block
 
-    modified_content = mermaid_block_pattern.sub(replace_mermaid_block, markdown_content)
-    
+    modified_content = mermaid_block_pattern.sub(
+        replace_mermaid_block, markdown_content
+    )
+
     logger.debug("Mermaid.js block conversion complete in separate processor.")
     return modified_content

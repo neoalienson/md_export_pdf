@@ -3,6 +3,7 @@ import markdown
 from bs4 import BeautifulSoup
 import re
 import logging
+
 logger = logging.getLogger(__name__)
 from .md_processor import mermaid
 from .md_processor import front_matter
@@ -10,9 +11,10 @@ from .md_processor import front_matter
 # Dictionary to store metadata for code blocks
 _code_block_metadata = {}
 
+
 def preprocess_markdown_for_code_blocks(md_content):
     global _code_block_metadata
-    _code_block_metadata = {} # Clear previous metadata
+    _code_block_metadata = {}  # Clear previous metadata
 
     # Regex to find fenced code blocks with optional attributes on the first line
     # Captures: (opening_fence), (language), (attributes_string_on_line), (code_content)
@@ -21,7 +23,9 @@ def preprocess_markdown_for_code_blocks(md_content):
     # Group 2: python
     # Group 3: {title="Hello World" linenums="true"} or just "title"
     # Group 4: code
-    code_block_pattern = re.compile(r'^(```)(\w+)\s*(.*)?\n(.*?)\n^```\s*', re.MULTILINE | re.DOTALL)
+    code_block_pattern = re.compile(
+        r"^(```)(\w+)\s*(.*)?\n(.*?)\n^```\s*", re.MULTILINE | re.DOTALL
+    )
 
     processed_content_parts = []
     last_end = 0
@@ -31,9 +35,11 @@ def preprocess_markdown_for_code_blocks(md_content):
         start, end = match.span()
         processed_content_parts.append(md_content[last_end:start])
 
-        opening_fence = match.group(1) # e.g., ```
-        lang = match.group(2).strip() # e.g., python
-        attributes_str_on_line = match.group(3).strip() # e.g., {title="Hello World" linenums="true"} or just "title"
+        opening_fence = match.group(1)  # e.g., ```
+        lang = match.group(2).strip()  # e.g., python
+        attributes_str_on_line = match.group(
+            3
+        ).strip()  # e.g., {title="Hello World" linenums="true"} or just "title"
         code_content = match.group(4)
 
         title = None
@@ -42,31 +48,39 @@ def preprocess_markdown_for_code_blocks(md_content):
         # Parse attributes_str_on_line for title and linenums
         if attributes_str_on_line:
             # Check if attributes are in curly braces
-            if attributes_str_on_line.startswith('{') and attributes_str_on_line.endswith('}'):
-                clean_attributes_str = attributes_str_on_line.strip('{}').strip()
+            if attributes_str_on_line.startswith(
+                "{"
+            ) and attributes_str_on_line.endswith("}"):
+                clean_attributes_str = attributes_str_on_line.strip("{}").strip()
             else:
-                clean_attributes_str = attributes_str_on_line # Assume it's just a word like 'title' or 'linenums'
+                clean_attributes_str = attributes_str_on_line  # Assume it's just a word like 'title' or 'linenums'
 
             # Extract title
             title_match = re.search(r'title="([^"]*)"|\'title\'', clean_attributes_str)
             if title_match:
-                title = title_match.group(1) if title_match.group(1) else title_match.group(0)
+                title = (
+                    title_match.group(1)
+                    if title_match.group(1)
+                    else title_match.group(0)
+                )
 
             # Extract linenums
-            if 'linenums' in clean_attributes_str:
+            if "linenums" in clean_attributes_str:
                 linenums = True
 
         current_block_id = f"code_block_{block_id_counter}"
         _code_block_metadata[current_block_id] = {
             "lang": lang,
             "title": title,
-            "linenums": linenums
+            "linenums": linenums,
         }
 
         # Reconstruct the fenced code block for markdown.Markdown
         # Only include the language in the opening fence.
         # Place the unique ID on a new line immediately after the closing fence for attr_list.
-        processed_content_parts.append(f"{opening_fence}{lang}\n{code_content}\n```\n{{#{current_block_id}}}\n")
+        processed_content_parts.append(
+            f"{opening_fence}{lang}\n{code_content}\n```\n{{#{current_block_id}}}\n"
+        )
         block_id_counter += 1
         last_end = end
 
@@ -85,24 +99,32 @@ def convert_markdown_to_html(md_content):
     logger.debug("Markdown pre-processed for code block attributes.")
 
     logger.debug("Performing basic Markdown to HTML conversion.")
-    md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc', 'attr_list', 'tables'], extension_configs={'toc': {'toc_depth': 4, 'anchorlink': False}})
+    md = markdown.Markdown(
+        extensions=["extra", "codehilite", "toc", "attr_list", "tables"],
+        extension_configs={"toc": {"toc_depth": 4, "anchorlink": False}},
+    )
     html = md.convert(preprocessed_md_content)
     logger.debug("Basic Markdown to HTML conversion complete.")
 
     # Re-parse HTML after prepending TOC to ensure BeautifulSoup sees the complete structure
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
 
     extracted_links = _extract_links_from_html(soup)
 
     logger.info("Markdown to HTML conversion completed.")
-    logger.debug(f"Returning: html_content_type={type(str(soup))}, extracted_links_type={type(extracted_links)}, front_matter_data_type={type(front_matter_data)}")
-    logger.debug(f"Returning: html_content_len={len(str(soup)) if isinstance(str(soup), str) else 'N/A'}, extracted_links_len={len(extracted_links) if isinstance(extracted_links, list) else 'N/A'}, front_matter_data_len={len(front_matter_data) if isinstance(front_matter_data, dict) else 'N/A'}")
+    logger.debug(
+        f"Returning: html_content_type={type(str(soup))}, extracted_links_type={type(extracted_links)}, front_matter_data_type={type(front_matter_data)}"
+    )
+    logger.debug(
+        f"Returning: html_content_len={len(str(soup)) if isinstance(str(soup), str) else 'N/A'}, extracted_links_len={len(extracted_links) if isinstance(extracted_links, list) else 'N/A'}, front_matter_data_len={len(front_matter_data) if isinstance(front_matter_data, dict) else 'N/A'}"
+    )
     return str(soup), extracted_links, front_matter_data
+
 
 def _extract_links_from_html(soup):
     links = []
-    for a_tag in soup.find_all('a', href=True):
-        href = a_tag['href']
+    for a_tag in soup.find_all("a", href=True):
+        href = a_tag["href"]
         text = a_tag.get_text()
-        links.append({'href': href, 'text': text})
+        links.append({"href": href, "text": text})
     return links

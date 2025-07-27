@@ -1,10 +1,19 @@
 from bs4 import BeautifulSoup
 from . import utils
 import logging
+
 logger = logging.getLogger(__name__)
 import markdown
 
-def apply_html_template(html_content, header_content, header_file, footer_content, footer_file, cover_page_file):
+
+def apply_html_template(
+    html_content,
+    header_content,
+    header_file,
+    footer_content,
+    footer_file,
+    cover_page_file,
+):
     logger.info("Applying HTML template to generate final HTML structure.")
     # Create a basic HTML structure
     # Include dedicated divs for header and footer that are always present
@@ -22,7 +31,7 @@ def apply_html_template(html_content, header_content, header_file, footer_conten
     </body>
     </html>
     """
-    soup = BeautifulSoup(template_html, 'html.parser')
+    soup = BeautifulSoup(template_html, "html.parser")
 
     # Insert cover page if provided
     cover_page_html = ""
@@ -37,11 +46,9 @@ def apply_html_template(html_content, header_content, header_file, footer_conten
 
     if cover_page_html:
         cover_page_div = soup.new_tag("div", id="cover-page")
-        cover_page_div.append(BeautifulSoup(cover_page_html, 'html.parser'))
+        cover_page_div.append(BeautifulSoup(cover_page_html, "html.parser"))
         soup.body.insert(0, cover_page_div)
         logger.info("Cover page successfully added.")
-
-    
 
     logger.info("HTML template application complete.")
     return str(soup)

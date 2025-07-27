@@ -5,7 +5,9 @@ import tempfile
 import subprocess
 import shutil
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 def read_file_content(file_path):
     logger.debug(f"Attempting to read file: {file_path}")
@@ -16,47 +18,62 @@ def read_file_content(file_path):
         logger.warning(f"File not found: {file_path}")
         return None
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
             return content
         logger.info(f"Read file content (assuming HTML or plain text): {file_path}")
-        return content # Assume HTML or plain text
+        return content  # Assume HTML or plain text
     except Exception as e:
         logger.error(f"Error reading file {file_path}: {e}", exc_info=True)
         return None
+
 
 def convert_mermaid_to_image(mermaid_code):
     logger.info("Starting Mermaid code to image conversion.")
     # Create temporary files for mermaid input and image output
     mmd_path = None
     try:
-        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.mmd') as mmd_file:
+        with tempfile.NamedTemporaryFile(
+            mode="w", delete=False, suffix=".mmd"
+        ) as mmd_file:
             mmd_file.write(mermaid_code)
             mmd_path = mmd_file.name
         logger.debug(f"Temporary Mermaid input file created: {mmd_path}")
 
-        png_path = mmd_path.replace('.mmd', '.png')
+        png_path = mmd_path.replace(".mmd", ".png")
         logger.debug(f"Temporary PNG output path: {png_path}")
 
         # Check if mmdc is available
         if not shutil.which("mmdc"):
-            logger.error("Mermaid CLI (mmdc) not found. Please install it via 'npm install -g @mermaid-js/mermaid-cli' and ensure it's in your system's PATH.")
-            raise FileNotFoundError("Mermaid CLI (mmdc) not found. Please install it via 'npm install -g @mermaid-js/mermaid-cli' and ensure it's in your system's PATH.")
+            logger.error(
+                "Mermaid CLI (mmdc) not found. Please install it via 'npm install -g @mermaid-js/mermaid-cli' and ensure it's in your system's PATH."
+            )
+            raise FileNotFoundError(
+                "Mermaid CLI (mmdc) not found. Please install it via 'npm install -g @mermaid-js/mermaid-cli' and ensure it's in your system's PATH."
+            )
 
         # Execute mmdc to convert mermaid to PNG
         command = f"mmdc -i {mmd_path} -o {png_path}"
         logger.info(f"Executing mmdc command: {command}")
         logger.debug(f"Current working directory for mmdc: {os.getcwd()}")
         # Using subprocess directly as run_shell_command doesn't return stdout/stderr for error handling easily
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True, cwd=os.path.dirname(mmd_path))
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=os.path.dirname(mmd_path),
+        )
         if result.stderr:
             logger.warning(f"mmdc stderr: {result.stderr}")
         logger.info(f"Mermaid conversion successful. Image saved to: {png_path}")
 
         # Read the PNG file and encode it to Base64
         import base64
+
         with open(png_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+            encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
         logger.debug(f"Encoded PNG to Base64: {png_path}")
         return f"data:image/png;base64,{encoded_string}"
     except subprocess.CalledProcessError as e:
@@ -65,7 +82,10 @@ def convert_mermaid_to_image(mermaid_code):
         logger.error(f"Stderr: {e.stderr}")
         raise
     except Exception as e:
-        logger.error(f"An unexpected error occurred during Mermaid conversion: {e}", exc_info=True)
+        logger.error(
+            f"An unexpected error occurred during Mermaid conversion: {e}",
+            exc_info=True,
+        )
         raise
     finally:
         # Clean up temporary .mmd and .png files
@@ -76,6 +96,7 @@ def convert_mermaid_to_image(mermaid_code):
             os.remove(png_path)
             logger.debug(f"Cleaned up temporary Mermaid output PNG file: {png_path}")
 
+
 def image_to_data_uri(image_path):
     logger.debug(f"Attempting to convert image to data URI: {image_path}")
     if not os.path.exists(image_path):
@@ -83,6 +104,7 @@ def image_to_data_uri(image_path):
         return None
     try:
         import base64
+
         # Determine MIME type based on file extension
         mime_type_map = {
             ".png": "image/png",
@@ -91,15 +113,19 @@ def image_to_data_uri(image_path):
             ".gif": "image/gif",
             ".svg": "image/svg+xml",
             ".webp": "image/webp",
-            ".bmp": "image/bmp"
+            ".bmp": "image/bmp",
         }
         ext = os.path.splitext(image_path)[1].lower()
-        mime_type = mime_type_map.get(ext, "application/octet-stream") # Default to generic binary
+        mime_type = mime_type_map.get(
+            ext, "application/octet-stream"
+        )  # Default to generic binary
 
         with open(image_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+            encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
         logger.info(f"Successfully converted image {image_path} to data URI.")
         return f"data:{mime_type};base64,{encoded_string}"
     except Exception as e:
-        logger.error(f"Error converting image {image_path} to data URI: {e}", exc_info=True)
+        logger.error(
+            f"Error converting image {image_path} to data URI: {e}", exc_info=True
+        )
         return None

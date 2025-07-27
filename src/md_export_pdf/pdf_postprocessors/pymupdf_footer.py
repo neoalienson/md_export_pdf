@@ -6,18 +6,21 @@ from typing import Dict, Any
 
 from .base import PdfPostProcessor
 
+
 class PyMuPdfFooterPostProcessor(PdfPostProcessor):
     def __init__(self, converter_instance: Any):
         super().__init__(converter_instance)
         self.logger = logging.getLogger(__name__)
 
     def apply_modifications(self, pdf_path: str, options: Dict) -> None:
-        footer_text = options.get('footer_text', '')
-        use_footer = options.get('use_footer', False)
-        
-        font_name = "Helvetica" # Using a standard base 14 font for robustness
+        footer_text = options.get("footer_text", "")
+        use_footer = options.get("use_footer", False)
 
-        self.logger.debug(f"PyMuPdfFooterPostProcessor: Applying modifications to {pdf_path}")
+        font_name = "Helvetica"  # Using a standard base 14 font for robustness
+
+        self.logger.debug(
+            f"PyMuPdfFooterPostProcessor: Applying modifications to {pdf_path}"
+        )
         self.logger.debug(f"Footer text: '{footer_text}'")
         self.logger.debug(f"Use footer: {use_footer}")
 
@@ -27,21 +30,30 @@ class PyMuPdfFooterPostProcessor(PdfPostProcessor):
 
         for i, page in enumerate(doc):
             self.logger.debug(f"Processing page {i+1} of {num_pages}")
-            
+
             if self.converter.cover_page_file and i == 0:
                 self.logger.debug(f"Skipping cover page {i+1} for footer.")
                 continue
 
             if use_footer and footer_text:
-                self.logger.debug(f"Attempting to add PyMuPDF footer to page {i+1}. Text: '{footer_text}'")
+                self.logger.debug(
+                    f"Attempting to add PyMuPDF footer to page {i+1}. Text: '{footer_text}'"
+                )
                 try:
                     footer_y = page.rect.height - 50
-                    page.insert_text((50, footer_y), footer_text.format(page_num=i + 1, total_pages=num_pages), fontname=font_name, fontsize=10)
-                    self.logger.debug(f"PyMuPDF footer added successfully to page {i+1}.")
+                    page.insert_text(
+                        (50, footer_y),
+                        footer_text.format(page_num=i + 1, total_pages=num_pages),
+                        fontname=font_name,
+                        fontsize=10,
+                    )
+                    self.logger.debug(
+                        f"PyMuPDF footer added successfully to page {i+1}."
+                    )
                 except Exception as e:
                     self.logger.error(f"Error adding PyMuPDF footer to page {i+1}: {e}")
                     self.logger.error(traceback.format_exc())
-        
+
         self.logger.debug(f"Saving modified PDF to {pdf_path}")
         temp_output_path = pdf_path + ".tmp"
         doc.save(temp_output_path)

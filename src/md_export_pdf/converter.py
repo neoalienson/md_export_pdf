@@ -6,22 +6,41 @@ from weasyprint import HTML, CSS
 from bs4 import BeautifulSoup
 import os
 from typing import Optional, Type
-import fitz # Import fitz for PyMuPDF operations
+import fitz  # Import fitz for PyMuPDF operations
 from .md_processor.markdown import convert_markdown_to_html
 from .md_processor.front_matter import extract_front_matter
 from .pdf_postprocessors.base import PdfPostProcessor
 from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
 from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
 from .pdf_postprocessors.dummy import DummyPostProcessor
-from .pdf_postprocessors.data_classification_watermark import DataClassificationWatermarkPostProcessor
+from .pdf_postprocessors.data_classification_watermark import (
+    DataClassificationWatermarkPostProcessor,
+)
 from .pdf_postprocessors.draft_watermark import DraftWatermarkPostProcessor
 from .pdf_postprocessors.metadata_postprocessor import MetadataPostProcessor
 from .html_preprocessors.weasyprint_header_footer import apply_weasyprint_header_footer
 
 logger = logging.getLogger(__name__)
 
+
 class MarkdownToPdfConverter:
-    def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None, use_pymupdf_header: bool = False, use_pymupdf_footer: bool = False, use_dummy_postprocessor: bool = False):
+    def __init__(
+        self,
+        input_file,
+        output_file,
+        css_file=None,
+        header_content=None,
+        header_file=None,
+        header_css=None,
+        footer_content=None,
+        footer_file=None,
+        footer_css=None,
+        cover_page_file=None,
+        cover_css=None,
+        use_pymupdf_header: bool = False,
+        use_pymupdf_footer: bool = False,
+        use_dummy_postprocessor: bool = False,
+    ):
         self.input_file = input_file
         self.output_file = output_file
         self.css_file = css_file
@@ -36,35 +55,35 @@ class MarkdownToPdfConverter:
         self.use_pymupdf_header = use_pymupdf_header
         self.use_pymupdf_footer = use_pymupdf_footer
         self.use_dummy_postprocessor = use_dummy_postprocessor
-        self.post_processor: Optional[PdfPostProcessor] = None # New attribute
+        self.post_processor: Optional[PdfPostProcessor] = None  # New attribute
 
     def _read_file_content(self, file_path, markdown_convert: bool = True):
-        logger.debug(f"Reading file content from: {file_path}, Markdown conversion: {markdown_convert}")
+        logger.debug(
+            f"Reading file content from: {file_path}, Markdown conversion: {markdown_convert}"
+        )
         if not file_path or not os.path.exists(file_path):
             logger.warning(f"File not found or path is empty: {file_path}")
             return None
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
         # If it's a markdown file and markdown_convert is True, convert to HTML
-        if markdown_convert and file_path.lower().endswith(('.md', '.markdown')):
+        if markdown_convert and file_path.lower().endswith((".md", ".markdown")):
             logger.debug(f"Converting Markdown content from {file_path} to HTML.")
             return markdown.markdown(content)
         logger.debug(f"Returning plain content from {file_path}.")
-        return content # Assume HTML or plain text
+        return content  # Assume HTML or plain text
 
     def _read_markdown(self):
-        with open(self.input_file, 'r', encoding='utf-8') as f:
+        with open(self.input_file, "r", encoding="utf-8") as f:
             return f.read()
 
     def _convert_cover_page_to_html(self):
         if not self.cover_page_file or not os.path.exists(self.cover_page_file):
             return ""
-        with open(self.cover_page_file, 'r', encoding='utf-8') as f:
+        with open(self.cover_page_file, "r", encoding="utf-8") as f:
             md_content = f.read()
         # Simple Markdown conversion for cover page, no TOC or Mermaid processing
         return markdown.markdown(md_content)
-
-    
 
     def _apply_html_template(self, html_content):
         logger.debug("Applying HTML template...")
@@ -84,7 +103,7 @@ class MarkdownToPdfConverter:
         </html>
         """
 
-        soup = BeautifulSoup(template_html, 'html.parser')
+        soup = BeautifulSoup(template_html, "html.parser")
         logger.debug("BeautifulSoup object created from template.")
 
         # Insert cover page if provided
@@ -92,19 +111,21 @@ class MarkdownToPdfConverter:
         if cover_page_html:
             logger.debug("Cover page HTML generated. Inserting into soup.")
             cover_page_div = soup.new_tag("div", id="cover-page", class_="cover-page")
-            cover_page_div.append(BeautifulSoup(cover_page_html, 'html.parser'))
+            cover_page_div.append(BeautifulSoup(cover_page_html, "html.parser"))
             soup.body.insert(0, cover_page_div)
 
         # Apply WeasyPrint headers and footers
         apply_weasyprint_header_footer(soup, self)
 
-        logger.debug("HTML template application complete. Returning string representation.")
+        logger.debug(
+            "HTML template application complete. Returning string representation."
+        )
         return str(soup)
 
-    
-
     def convert(self):
-        logger.info(f"Starting PDF conversion for '{self.input_file}' to '{self.output_file}'")
+        logger.info(
+            f"Starting PDF conversion for '{self.input_file}' to '{self.output_file}'"
+        )
         md_content = self._read_markdown()
         logger.debug("Markdown content read.")
         md_content, front_matter_data = extract_front_matter(md_content)
@@ -142,19 +163,24 @@ class MarkdownToPdfConverter:
             logger.debug(f"Added cover page CSS: {self.cover_css}")
 
         # Add default CSS for basic styling
-        default_css_path = os.path.join(os.path.dirname(__file__), 'styles', 'default.css')
+        default_css_path = os.path.join(
+            os.path.dirname(__file__), "styles", "default.css"
+        )
         if os.path.exists(default_css_path):
             stylesheets.append(CSS(filename=default_css_path))
             logger.debug(f"Added default CSS: {default_css_path}")
 
         try:
             html_doc.write_pdf(self.output_file, stylesheets=stylesheets)
-            logger.info(f"Successfully converted '{self.input_file}' to '{self.output_file}' using WeasyPrint.")
+            logger.info(
+                f"Successfully converted '{self.input_file}' to '{self.output_file}' using WeasyPrint."
+            )
         except Exception as e:
             logger.error(f"An error occurred during WeasyPrint conversion: {e}")
             import traceback
+
             logger.error(traceback.format_exc())
-            raise # Re-raise the exception to stop execution
+            raise  # Re-raise the exception to stop execution
 
         # Determine and initialize PDF post-processor
         logger.debug(f"PyMuPDF header toggle: {self.use_pymupdf_header}")
@@ -165,46 +191,73 @@ class MarkdownToPdfConverter:
         logger.debug(f"Footer file: '{self.footer_file}'")
         if self.use_pymupdf_header and (self.header_content or self.header_file):
             logger.info("Starting PyMuPDF header post-processing...")
-            header_text = self.header_content or (self._read_file_content(self.header_file, markdown_convert=False) if self.header_file else "")
+            header_text = self.header_content or (
+                self._read_file_content(self.header_file, markdown_convert=False)
+                if self.header_file
+                else ""
+            )
             header_post_processor = PyMuPdfHeaderPostProcessor(self)
-            header_post_processor.apply_modifications(self.output_file, {'header_text': header_text, 'use_header': True})
+            header_post_processor.apply_modifications(
+                self.output_file, {"header_text": header_text, "use_header": True}
+            )
             logger.info("PyMuPDF header post-processing complete.")
         else:
-            logger.info("PyMuPDF header post-processing skipped (not toggled or no content).")
+            logger.info(
+                "PyMuPDF header post-processing skipped (not toggled or no content)."
+            )
 
         if self.use_pymupdf_footer and (self.footer_content or self.footer_file):
             logger.info("Starting PyMuPDF footer post-processing...")
-            footer_text = self.footer_content or (self._read_file_content(self.footer_file, markdown_convert=False) if self.footer_file else "")
+            footer_text = self.footer_content or (
+                self._read_file_content(self.footer_file, markdown_convert=False)
+                if self.footer_file
+                else ""
+            )
             footer_post_processor = PyMuPdfFooterPostProcessor(self)
-            footer_post_processor.apply_modifications(self.output_file, {'footer_text': footer_text, 'use_footer': True})
+            footer_post_processor.apply_modifications(
+                self.output_file, {"footer_text": footer_text, "use_footer": True}
+            )
             logger.info("PyMuPDF footer post-processing complete.")
         else:
-            logger.info("PyMuPDF footer post-processing skipped (not toggled or no content).")
+            logger.info(
+                "PyMuPDF footer post-processing skipped (not toggled or no content)."
+            )
 
-        if front_matter_data.get('draft', False):
-            logger.info("Starting DraftWatermark post-processing (draft mode detected)...")
+        if front_matter_data.get("draft", False):
+            logger.info(
+                "Starting DraftWatermark post-processing (draft mode detected)..."
+            )
             draft_watermark_post_processor = DraftWatermarkPostProcessor(self)
             draft_watermark_post_processor.apply_modifications(self.output_file, {})
             logger.info("DraftWatermark post-processing complete.")
         else:
             logger.info("DraftWatermark post-processing skipped (not in draft mode).")
 
-        data_classification = front_matter_data.get('data_classification')
+        data_classification = front_matter_data.get("data_classification")
         if data_classification:
-            logger.info(f"Starting DataClassificationWatermark post-processing (classification: {data_classification})...")
-            data_classification_watermark_post_processor = DataClassificationWatermarkPostProcessor(self)
-            data_classification_watermark_post_processor.apply_modifications(self.output_file, {'data_classification': data_classification})
+            logger.info(
+                f"Starting DataClassificationWatermark post-processing (classification: {data_classification})..."
+            )
+            data_classification_watermark_post_processor = (
+                DataClassificationWatermarkPostProcessor(self)
+            )
+            data_classification_watermark_post_processor.apply_modifications(
+                self.output_file, {"data_classification": data_classification}
+            )
             logger.info("DataClassificationWatermark post-processing complete.")
         else:
-            logger.info("DataClassificationWatermark post-processing skipped (no classification specified).")
+            logger.info(
+                "DataClassificationWatermark post-processing skipped (no classification specified)."
+            )
 
         # Apply metadata from front matter
-        metadata_list = front_matter_data.get('metadata', [])
+        metadata_list = front_matter_data.get("metadata", [])
         if metadata_list:
             logger.info("Starting MetadataPostProcessor...")
             metadata_post_processor = MetadataPostProcessor(self)
-            metadata_post_processor.apply_modifications(self.output_file, {'metadata_list': metadata_list})
+            metadata_post_processor.apply_modifications(
+                self.output_file, {"metadata_list": metadata_list}
+            )
             logger.info("MetadataPostProcessor complete.")
         else:
             logger.info("No metadata found in front matter to apply.")
-

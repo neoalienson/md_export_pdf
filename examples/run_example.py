@@ -8,10 +8,11 @@ from contextlib import contextmanager
 from md_export_pdf.converter import MarkdownToPdfConverter
 from md_export_pdf.logging_config import configure_third_party_logging
 
+
 @contextmanager
 def suppress_stdout_stderr():
     """A context manager to suppress stdout and stderr."""
-    with open(os.devnull, 'w') as fnull:
+    with open(os.devnull, "w") as fnull:
         old_stdout = sys.stdout
         old_stderr = sys.stderr
         sys.stdout = fnull
@@ -22,9 +23,17 @@ def suppress_stdout_stderr():
             sys.stdout = old_stdout
             sys.stderr = old_stderr
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Convert Markdown to PDF with various options.")
-    parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], help="Set the logging level.")
+    parser = argparse.ArgumentParser(
+        description="Convert Markdown to PDF with various options."
+    )
+    parser.add_argument(
+        "--log-level",
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Set the logging level.",
+    )
     args = parser.parse_args()
 
     # Set logging level based on argument
@@ -33,7 +42,9 @@ def main():
         raise ValueError(f"Invalid log level: {args.log_level}")
 
     # Configure basic logging for the root logger, forcing re-configuration if necessary
-    logging.basicConfig(level=numeric_level, format='%(levelname)s: %(message)s', force=True)
+    logging.basicConfig(
+        level=numeric_level, format="%(levelname)s: %(message)s", force=True
+    )
 
     # Define a logger for this specific script
     logger = logging.getLogger(__name__)
@@ -54,7 +65,7 @@ def main():
 
     # Cover page files
     cover_page_file = os.path.join(current_dir, "cover.md")
-    cover_css_file = os.path.join(current_dir, "cover.css") # New: Cover page CSS
+    cover_css_file = os.path.join(current_dir, "cover.css")  # New: Cover page CSS
 
     # Header files
     header_file = os.path.join(current_dir, "header.md")
@@ -80,13 +91,13 @@ def main():
         # Hardcode PyMuPDF usage for header and footer
         use_pymupdf_header=True,
         use_pymupdf_footer=True,
-        header_content="My Hardcoded Header", # Example hardcoded header
-        footer_content="Page {page_num} of {total_pages}", # Example hardcoded footer
-        
+        header_content="My Hardcoded Header",  # Example hardcoded header
+        footer_content="Page {page_num} of {total_pages}",  # Example hardcoded footer
     )
     converter.convert()
     logger.info("Conversion complete!")
     logger.info(f"You can find the generated PDF at: {output_pdf_file}")
+
 
 if __name__ == "__main__":
     main()

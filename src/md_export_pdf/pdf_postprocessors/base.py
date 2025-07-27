@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 
+
 class PdfPostProcessor(ABC):
     def __init__(self, converter_instance: Any):
         """
