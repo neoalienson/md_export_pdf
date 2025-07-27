@@ -13,7 +13,7 @@ from .pdf_postprocessors.base import PdfPostProcessor
 from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
 from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
 from .pdf_postprocessors.dummy import DummyPostProcessor
-from .pdf_postprocessors.watermark import WatermarkPostProcessor
+from .pdf_postprocessors.draft_watermark import DraftWatermarkPostProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -212,8 +212,8 @@ class MarkdownToPdfConverter:
             logger.info("PyMuPDF footer post-processing skipped (not toggled or no content).")
 
         if front_matter_data.get('draft', False):
-            logger.info("Starting Watermark post-processing (draft mode detected)...")
-            watermark_post_processor = WatermarkPostProcessor(self)
+            logger.info("Starting DraftWatermark post-processing (draft mode detected)...")
+            watermark_post_processor = DraftWatermarkPostProcessor(self)
             watermark_post_processor.apply_modifications(self.output_file, {})
             logger.info("Watermark post-processing complete.")
         else:

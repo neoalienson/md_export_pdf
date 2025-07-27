@@ -10,13 +10,13 @@ from .base import PdfPostProcessor
 
 logger = logging.getLogger(__name__)
 
-class WatermarkPostProcessor(PdfPostProcessor):
+class DraftWatermarkPostProcessor(PdfPostProcessor):
     def __init__(self, converter_instance: Any):
         super().__init__(converter_instance)
         self.logger = logging.getLogger(__name__)
 
     def apply_modifications(self, pdf_path: str, options: Dict) -> None:
-        self.logger.debug(f"WatermarkPostProcessor: Applying watermark to {pdf_path}")
+        self.logger.debug(f"DraftWatermarkPostProcessor: Applying watermark to {pdf_path}")
 
         doc = fitz.open(pdf_path)
         num_pages = len(doc)
