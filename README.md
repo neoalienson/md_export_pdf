@@ -39,14 +39,22 @@ md-export-pdf <input_file.md> -o <output_file.pdf> -s <style.css> \
 
 This project implements a pluggable system for PDF post-processing, allowing for flexible modifications to the generated PDF after the initial conversion by WeasyPrint. This system is built around the `PdfPostProcessor` abstract base class, which defines a standard interface for applying modifications.
 
--   **`PyMuPdfHeaderPostProcessor`**: This is a concrete implementation that leverages PyMuPDF for adding headers. It is used when `--use-pymupdf-header` is enabled.
--   **`PyMuPdfFooterPostProcessor`**: This is a concrete implementation that leverages PyMuPDF for adding footers. It is used when `--use-pymupdf-footer` is enabled.
+The available PDF post-processors are dynamically loaded from the `PDF_POSTPROCESSOR_PIPELINE` list defined in `src/md_export_pdf/config.py`. Each post-processor in this pipeline is a class that inherits from `PdfPostProcessor` and implements the following methods:
+
+-   **`should_apply(self, converter_instance, front_matter_data) -> bool`**: This method determines whether the post-processor should be applied based on the converter's settings and any data extracted from the Markdown file's front matter.
+-   **`get_process_options(self, converter_instance, front_matter_data) -> Dict`**: If `should_apply` returns `True`, this method is called to gather and return a dictionary of options that the `process` method will use. This centralizes the logic for preparing the necessary data for each post-processor.
+-   **`process(self, pdf_path: str, options: Dict) -> None`**: This abstract method applies the actual modifications to the PDF file at the given path, using the options provided by `get_process_options`.
+
+Here are the currently implemented post-processors:
+
+-   **`PyMuPdfHeaderPostProcessor`**: This concrete implementation leverages PyMuPDF for adding headers. It is applied when `--use-pymupdf-header` is enabled and header content is provided.
+-   **`PyMuPdfFooterPostProcessor`**: This concrete implementation leverages PyMuPDF for adding footers. It is applied when `--use-pymupdf-footer` is enabled and footer content is provided.
 -   **`DummyPostProcessor`**: A simple implementation for testing and validation purposes. It performs no actual modifications but logs its execution. It can be enabled using the `--use-dummy-postprocessor` CLI option.
 -   **`DraftWatermarkPostProcessor`**: This post-processor adds a "DRAFT" watermark to each page of the PDF if `draft: true` is present in the Markdown file's front matter.
 -   **`DataClassificationWatermarkPostProcessor`**: This post-processor adds a data classification watermark (CONFIDENTIAL, RESTRICTED, or SECRET) in red to each page of the PDF if `data_classification` is specified in the Markdown file's front matter.
--   **Metadata from Front Matter**: The converter now extracts `metadata` from the YAML front matter and applies it to the generated PDF's metadata properties. This allows for programmatic control over PDF metadata like author, title, etc. PyMuPDF only supports the following keys: `author`, `title`, `subject`, `keywords`, `creator`, `producer`, `creationDate`, `modDate`.
+-   **`MetadataPostProcessor`**: This post-processor extracts `metadata` from the YAML front matter and applies it to the generated PDF's metadata properties. This allows for programmatic control over PDF metadata like author, title, etc. PyMuPDF only supports the following keys: `author`, `title`, `subject`, `keywords`, `creator`, `producer`, `creationDate`, `modDate`.
 
-This modular design allows for easy integration of new PDF manipulation functionalities or alternative libraries in the future.
+This modular and dynamic design allows for easy integration of new PDF manipulation functionalities or alternative libraries in the future, simply by adding new `PdfPostProcessor` implementations to the `PDF_POSTPROCESSOR_PIPELINE` in `config.py`.
 
 ### Processing Flowchart
 
