@@ -14,3 +14,11 @@ class BaseProcessor(ABC):
     @abstractmethod
     def process(self, *args, **kwargs):
         pass
+
+class MarkdownPreprocessor(BaseProcessor):
+    def __init__(self, priority: int):
+        super().__init__(priority, ProcessorType.MARKDOWN_PREPROCESSOR)
+
+    @abstractmethod
+    def process_markdown(self, md_content: str) -> str:
+        pass

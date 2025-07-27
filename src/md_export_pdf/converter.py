@@ -7,8 +7,7 @@ from bs4 import BeautifulSoup
 import os
 from typing import Optional, Type
 import fitz  # Import fitz for PyMuPDF operations
-from .md_preprocessor.markdown import convert_markdown_to_html
-from .md_preprocessor.front_matter import extract_front_matter
+from .html_generator import convert_markdown_to_html
 from .pdf_postprocessors.base import PdfPostProcessor
 from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
 from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
@@ -116,8 +115,7 @@ class MarkdownToPdfConverter:
         )
         md_content = self._read_markdown()
         logger.debug("Markdown content read.")
-        md_content, front_matter_data = extract_front_matter(md_content)
-        html_content = convert_markdown_to_html(md_content)
+        html_content, front_matter_data = convert_markdown_to_html(md_content)
         logger.debug("Markdown converted to HTML.")
         final_html = self._apply_html_template(html_content)
         logger.debug("HTML template applied.")

@@ -1,5 +1,5 @@
 import pytest
-from md_export_pdf.md_preprocessor.mermaid import process_mermaid_blocks
+from md_export_pdf.md_preprocessor.mermaid import MermaidProcessor
 from md_export_pdf import utils
 
 
@@ -41,7 +41,8 @@ Here is a diagram:
 And some more text.
 """
 
-    processed_content = process_mermaid_blocks(markdown_content)
+    processor = MermaidProcessor()
+    processed_content = processor.process_markdown(markdown_content)
     assert processed_content.strip() == expected_output.strip()
 
 
@@ -86,7 +87,8 @@ some other block in between
 ![Mermaid Diagram]({expected_image_data_uri_2})
 """
 
-    processed_content = process_mermaid_blocks(markdown_content)
+    processor = MermaidProcessor()
+    processed_content = processor.process_markdown(markdown_content)
     assert processed_content.strip() == expected_output.strip()
 
 
@@ -101,7 +103,8 @@ print("Hello")
 ```
 """
 
-    processed_content = process_mermaid_blocks(markdown_content)
+    processor = MermaidProcessor()
+    processed_content = processor.process_markdown(markdown_content)
     assert processed_content.strip() == markdown_content.strip()
 
 
@@ -118,5 +121,6 @@ graph TD;
 ```
 """
 
-    processed_content = process_mermaid_blocks(markdown_content)
+    processor = MermaidProcessor()
+    processed_content = processor.process_markdown(markdown_content)
     assert processed_content.strip() == markdown_content.strip()

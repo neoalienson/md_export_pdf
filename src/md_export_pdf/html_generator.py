@@ -5,26 +5,31 @@ import re
 import logging
 
 logger = logging.getLogger(__name__)
-from .md_preprocessor import mermaid
-from .md_preprocessor import front_matter
-from .md_preprocessor.code_block_processor import preprocess_markdown_for_code_blocks
+from .config import MARKDOWN_PREPROCESSOR_PIPELINE
+from .md_preprocessor.front_matter import FrontMatterProcessor
 
 def convert_markdown_to_html(md_content):
     logger.info("Starting Markdown to HTML conversion.")
 
-    md_content, front_matter_data = front_matter.remove_front_matter(md_content)
-    md_content = mermaid.process_mermaid_blocks(md_content)
+    current_md_content = md_content
+    front_matter_data = {}
 
-    # Pre-process markdown to handle custom code block attributes
-    preprocessed_md_content = preprocess_markdown_for_code_blocks(md_content)
-    logger.debug("Markdown pre-processed for code block attributes.")
+    # Sort processors by priority
+    sorted_processors = sorted(MARKDOWN_PREPROCESSOR_PIPELINE, key=lambda p: p.priority)
+
+    for processor_instance in sorted_processors:
+        if isinstance(processor_instance, FrontMatterProcessor):
+            current_md_content, front_matter_data = processor_instance.process_markdown(current_md_content)
+        else:
+            current_md_content = processor_instance.process_markdown(current_md_content)
+        logger.debug(f"Applied Markdown pre-processor: {processor_instance.__class__.__name__}")
 
     logger.debug("Performing basic Markdown to HTML conversion.")
     md = markdown.Markdown(
         extensions=["extra", "codehilite", "toc", "attr_list", "tables"],
         extension_configs={"toc": {"toc_depth": 4, "anchorlink": False}},
     )
-    html = md.convert(preprocessed_md_content)
+    html = md.convert(current_md_content)
     logger.debug("Basic Markdown to HTML conversion complete.")
 
     # Re-parse HTML after prepending TOC to ensure BeautifulSoup sees the complete structure
