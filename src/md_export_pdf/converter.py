@@ -126,12 +126,6 @@ class MarkdownToPdfConverter:
         final_html = self._apply_html_template(html_content)
         logger.debug("HTML template applied.")
 
-        # Debug: Save final_html to a temporary file
-        debug_html_path = "debug_output.html"
-        with open(debug_html_path, "w", encoding="utf-8") as f:
-            f.write(final_html)
-        logger.debug(f"Saved final HTML to {debug_html_path} for debugging.")
-
         # Convert HTML to PDF using WeasyPrint
         logger.info("Starting WeasyPrint conversion...")
         html_doc = HTML(string=final_html, base_url=os.path.dirname(self.input_file))
