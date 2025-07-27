@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 import os
 import subprocess
 from bs4 import BeautifulSoup
-from md_export_pdf.md_processor.markdown import convert_markdown_to_html
+from md_export_pdf.md_preprocessor.markdown import convert_markdown_to_html
 from md_export_pdf.converter import MarkdownToPdfConverter
 from weasyprint import HTML, CSS
 
@@ -39,7 +39,7 @@ def test_convert_markdown_to_html_basic_markdown():
 
 
 @patch(
-    "md_export_pdf.md_processor.mermaid.convert_mermaid_to_image",
+    "md_export_pdf.md_preprocessor.mermaid.convert_mermaid_to_image",
     return_value="/tmp/test_mermaid.png",
 )
 def test_convert_markdown_to_html_with_mermaid(mock_convert_mermaid):

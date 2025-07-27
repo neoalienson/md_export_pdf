@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup
 import os
 from typing import Optional, Type
 import fitz  # Import fitz for PyMuPDF operations
-from .md_processor.markdown import convert_markdown_to_html
-from .md_processor.front_matter import extract_front_matter
+from .md_preprocessor.markdown import convert_markdown_to_html
+from .md_preprocessor.front_matter import extract_front_matter
 from .pdf_postprocessors.base import PdfPostProcessor
 from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
 from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor

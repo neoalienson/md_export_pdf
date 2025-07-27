@@ -53,10 +53,15 @@ This modular design allows for easy integration of new PDF manipulation function
 ```mermaid
 graph TD
     A[Markdown Input] --> B{Front Matter Extraction};
-    B --> C{Mermaid Processing};
-    C --> C1[Code Block Pre-processing];
-    C1 -->E1
-    E1 --> D[Markdown to HTML Conversion];
+    B --> MD_PRE_SUBGRAPH;
+
+    subgraph MD_PRE_SUBGRAPH [Markdown Pre-processing]
+        direction LR
+        MD1[Mermaid Processing] --> MD2[Code Block Pre-processing];
+    end
+
+    MD_PRE_SUBGRAPH --> D[Markdown to HTML Conversion];
+    D --> E_subgraph;
     D --> F[WeasyPrint HTML to PDF Conversion];
 
     subgraph PDF Post-processors

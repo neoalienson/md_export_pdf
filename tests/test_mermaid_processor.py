@@ -1,5 +1,5 @@
 import pytest
-from md_export_pdf.md_processor.mermaid import process_mermaid_blocks
+from md_export_pdf.md_preprocessor.mermaid import process_mermaid_blocks
 from md_export_pdf import utils
 
 
