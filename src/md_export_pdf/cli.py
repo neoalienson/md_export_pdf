@@ -1,4 +1,4 @@
-# src/markdown_to_pdf/cli.py
+# src/md_export_pdf/cli.py
 
 import argparse
 from .converter import MarkdownToPdfConverter

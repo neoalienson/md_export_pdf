@@ -1,4 +1,4 @@
-# src/markdown_to_pdf/converter.py
+# src/md_export_pdf/converter.py
 
 import logging
 import markdown
@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import os
 from typing import Optional, Type
 import fitz # Import fitz for PyMuPDF operations
-from .markdown_processor import convert_markdown_to_html
+from md_export_pdf.markdown_processor import convert_markdown_to_html
 from .pdf_postprocessors.base import PdfPostProcessor
 from .pdf_postprocessors.pymupdf_postprocessor import PyMuPdfPostProcessor
 from .pdf_postprocessors.dummy_postprocessor import DummyPostProcessor

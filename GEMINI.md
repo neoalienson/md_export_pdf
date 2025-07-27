@@ -4,7 +4,7 @@ This `markdown-to-pdf` project is a Python tool designed to convert Markdown fil
 
 ## Default Styling
 
-The default CSS styling for the PDF output is now located in `src/markdown_to_pdf/styles/default.css`. This file contains base styles for elements, page numbering, and specific adjustments for code blocks and the Table of Contents.
+The default CSS styling for the PDF output is now located in `src/md_export_pdf/styles/default.css`. This file contains base styles for elements, page numbering, and specific adjustments for code blocks and the Table of Contents.
 
 ## Key Features for Gemini CLI Interaction
 

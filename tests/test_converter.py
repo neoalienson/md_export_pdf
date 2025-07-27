@@ -2,7 +2,7 @@
 
 import os
 import pytest
-from markdown_to_pdf.converter import MarkdownToPdfConverter
+from md_export_pdf.converter import MarkdownToPdfConverter
 
 @pytest.fixture
 def temp_markdown_file(tmp_path):

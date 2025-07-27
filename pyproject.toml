@@ -1,5 +1,5 @@
 [project]
-name = "markdown-to-pdf"
+name = "md-export-pdf"
 version = "0.1.0"
 description = "A Python tool to convert Markdown files to PDF with advanced styling and features."
 authors = [
@@ -18,7 +18,7 @@ readme = "README.md"
 license = { text = "MIT" }
 
 [project.scripts]
-markdown-to-pdf = "markdown_to_pdf.cli:main"
+md-export-pdf = "md_export_pdf.cli:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]

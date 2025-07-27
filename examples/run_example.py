@@ -3,9 +3,9 @@ import argparse
 import logging
 import sys
 from contextlib import contextmanager
-from markdown_to_pdf.converter import MarkdownToPdfConverter
+from md_export_pdf.converter import MarkdownToPdfConverter
 
-from markdown_to_pdf.logging_config import configure_third_party_logging
+from md_export_pdf.logging_config import configure_third_party_logging
 
 @contextmanager
 def suppress_stdout_stderr():

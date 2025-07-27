@@ -14,7 +14,7 @@ A Python tool to convert Markdown files to PDF with advanced styling, including 
 ## Installation
 
 ```bash
-pip install markdown-to-pdf
+pip install md-export-pdf
 ```
 
 **Note:** For Mermaid.js diagram conversion, you also need to install `mermaid.cli` (mmdc) via npm:
@@ -25,7 +25,7 @@ npm install -g @mermaid-js/mermaid-cli
 ## Usage
 
 ```bash
-markdown-to-pdf <input_file.md> -o <output_file.pdf> -s <style.css> \
+md-export-pdf <input_file.md> -o <output_file.pdf> -s <style.css> \
   [--header "My Document" | --header-file <header.md/html>] [--header-css <header.css>] \
   [--footer "Page {page_num} of {total_pages}" | --footer-file <footer.md/html>] [--footer-css <footer.css>] \
   [--cover-page <cover_page.md>] [--cover-css <cover.css>] \
@@ -50,6 +50,7 @@ To set up the development environment:
 
 ```bash
 git clone <repository_url>
-cd markdown-to-pdf
+cd md-export-pdf
 pip install -e .
 ```
+
