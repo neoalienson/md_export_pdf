@@ -54,10 +54,10 @@ This modular design allows for easy integration of new PDF manipulation function
 graph TD
     A[Markdown Input] --> B{Front Matter Extraction};
     B --> C{Mermaid Processing};
-    C --> D[Markdown to HTML Conversion];
-    D --> E{HTML Template Application};
-    E --> F[WeasyPrint HTML to PDF Conversion];
-    F[WeasyPrint HTML to PDF Conversion];
+    C --> C1[Code Block Pre-processing];
+    C1 -->E1
+    E1 --> D[Markdown to HTML Conversion];
+    D --> F[WeasyPrint HTML to PDF Conversion];
 
     subgraph PDF Post-processors
         direction LR
@@ -77,8 +77,6 @@ graph TD
         E2[WeasyPrint Header/Footer Injection]
     end
 
-    E --> E1;
-    E --> E2;
 ```
 
 ## Development
