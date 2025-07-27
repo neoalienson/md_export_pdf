@@ -17,6 +17,14 @@ class PyMuPdfFooterPostProcessor(PdfPostProcessor):
             converter_instance.footer_content or converter_instance.footer_file
         )
 
+    def get_process_options(self, converter_instance: Any, front_matter_data: Dict) -> Dict:
+        footer_text = converter_instance.footer_content or (
+            converter_instance._read_file_content(converter_instance.footer_file, markdown_convert=False)
+            if converter_instance.footer_file
+            else ""
+        )
+        return {"footer_text": footer_text, "use_footer": True}
+
     def process(self, pdf_path: str, options: Dict) -> None:
         footer_text = options.get("footer_text", "")
         use_footer = options.get("use_footer", False)

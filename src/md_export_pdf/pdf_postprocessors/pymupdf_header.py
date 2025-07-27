@@ -17,6 +17,14 @@ class PyMuPdfHeaderPostProcessor(PdfPostProcessor):
             converter_instance.header_content or converter_instance.header_file
         )
 
+    def get_process_options(self, converter_instance: Any, front_matter_data: Dict) -> Dict:
+        header_text = converter_instance.header_content or (
+            converter_instance._read_file_content(converter_instance.header_file, markdown_convert=False)
+            if converter_instance.header_file
+            else ""
+        )
+        return {"header_text": header_text, "use_header": True}
+
     def process(self, pdf_path: str, options: Dict) -> None:
         header_text = options.get("header_text", "")
         use_header = options.get("use_header", False)

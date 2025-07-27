@@ -181,32 +181,7 @@ class MarkdownToPdfConverter:
             pp_instance = pp_class(self)
             if pp_instance.should_apply(self, front_matter_data):
                 logger.info(f"Applying PDF post-processor: {pp_class.__name__}...")
-                options = {}
-                if isinstance(pp_instance, PyMuPdfHeaderPostProcessor):
-                    options["header_text"] = self.header_content or (
-                        self._read_file_content(
-                            self.header_file, markdown_convert=False
-                        )
-                        if self.header_file
-                        else ""
-                    )
-                    options["use_header"] = True
-                elif isinstance(pp_instance, PyMuPdfFooterPostProcessor):
-                    options["footer_text"] = self.footer_content or (
-                        self._read_file_content(
-                            self.footer_file, markdown_convert=False
-                        )
-                        if self.footer_file
-                        else ""
-                    )
-                    options["use_footer"] = True
-                elif isinstance(pp_instance, DataClassificationWatermarkPostProcessor):
-                    options["data_classification"] = front_matter_data.get(
-                        "data_classification"
-                    )
-                elif isinstance(pp_instance, MetadataPostProcessor):
-                    options["metadata_list"] = front_matter_data.get("metadata", [])
-
+                options = pp_instance.get_process_options(self, front_matter_data)
                 pp_instance.process(self.output_file, options)
                 logger.info(f"PDF post-processor {pp_class.__name__} applied.")
             else:

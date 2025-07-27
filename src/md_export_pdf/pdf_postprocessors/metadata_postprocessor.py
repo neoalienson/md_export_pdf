@@ -16,6 +16,9 @@ class MetadataPostProcessor(PdfPostProcessor):
     def should_apply(self, converter_instance: Any, front_matter_data: Dict) -> bool:
         return bool(front_matter_data.get("metadata"))
 
+    def get_process_options(self, converter_instance: Any, front_matter_data: Dict) -> Dict:
+        return {"metadata_list": front_matter_data.get("metadata", [])}
+
     def process(self, pdf_path: str, options: Dict) -> None:
         metadata_list = options.get("metadata_list", [])
         if not metadata_list:
