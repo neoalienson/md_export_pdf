@@ -31,6 +31,7 @@ def main():
     parser.add_argument("--use-pymupdf-header", action="store_true", help="Use PyMuPDF for header generation.")
     parser.add_argument("--use-pymupdf-footer", action="store_true", help="Use PyMuPDF for footer generation.")
     parser.add_argument("--use-dummy-postprocessor", action="store_true", help="Use a dummy post-processor for testing.")
+    parser.add_argument("--use-watermark", action="store_true", help="Apply a 'DRAFT' watermark to the PDF.")
 
     parser.add_argument("--log-level", default="ERROR", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], help="Set the logging level.")
 
@@ -50,7 +51,8 @@ def main():
         cover_css=args.cover_css,
         use_pymupdf_header=args.use_pymupdf_header,
         use_pymupdf_footer=args.use_pymupdf_footer,
-        use_dummy_postprocessor=args.use_dummy_postprocessor
+        use_dummy_postprocessor=args.use_dummy_postprocessor,
+        use_watermark=args.use_watermark
     )
     converter.convert()
 

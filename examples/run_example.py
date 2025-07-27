@@ -82,7 +82,8 @@ def main():
             use_pymupdf_header=True,
             use_pymupdf_footer=True,
             header_content="My Hardcoded Header", # Example hardcoded header
-            footer_content="Page {page_num} of {total_pages}" # Example hardcoded footer
+            footer_content="Page {page_num} of {total_pages}", # Example hardcoded footer
+            use_watermark=True,
         )
         converter.convert()
         logger.info("Conversion complete!")

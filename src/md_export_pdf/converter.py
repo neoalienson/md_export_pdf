@@ -12,11 +12,12 @@ from .pdf_postprocessors.base import PdfPostProcessor
 from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
 from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
 from .pdf_postprocessors.dummy import DummyPostProcessor
+from .pdf_postprocessors.watermark import WatermarkPostProcessor
 
 logger = logging.getLogger(__name__)
 
 class MarkdownToPdfConverter:
-    def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None, use_pymupdf_header: bool = False, use_pymupdf_footer: bool = False, use_dummy_postprocessor: bool = False):
+    def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None, use_pymupdf_header: bool = False, use_pymupdf_footer: bool = False, use_dummy_postprocessor: bool = False, use_watermark: bool = False):
         self.input_file = input_file
         self.output_file = output_file
         self.css_file = css_file
@@ -30,7 +31,8 @@ class MarkdownToPdfConverter:
         self.cover_css = cover_css
         self.use_pymupdf_header = use_pymupdf_header
         self.use_pymupdf_footer = use_pymupdf_footer
-        self.use_dummy_postprocessor = use_dummy_postprocessor # New attribute
+        self.use_dummy_postprocessor = use_dummy_postprocessor
+        self.use_watermark = use_watermark # New attribute
         self.post_processor: Optional[PdfPostProcessor] = None # New attribute
 
     def _read_file_content(self, file_path, markdown_convert: bool = True):
@@ -207,4 +209,12 @@ class MarkdownToPdfConverter:
             logger.info("PyMuPDF footer post-processing complete.")
         else:
             logger.info("PyMuPDF footer post-processing skipped (not toggled or no content).")
+
+        if self.use_watermark:
+            logger.info("Starting Watermark post-processing...")
+            watermark_post_processor = WatermarkPostProcessor(self)
+            watermark_post_processor.apply_modifications(self.output_file, {})
+            logger.info("Watermark post-processing complete.")
+        else:
+            logger.info("Watermark post-processing skipped.")
 
