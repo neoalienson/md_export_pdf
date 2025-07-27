@@ -5,9 +5,9 @@ import re
 import logging
 
 logger = logging.getLogger(__name__)
-from .md_processor import mermaid
-from .md_processor import front_matter
-from .md_processor.code_block_processor import preprocess_markdown_for_code_blocks
+from .md_preprocessor import mermaid
+from .md_preprocessor import front_matter
+from .md_preprocessor.code_block_processor import preprocess_markdown_for_code_blocks
 
 def convert_markdown_to_html(md_content):
     logger.info("Starting Markdown to HTML conversion.")

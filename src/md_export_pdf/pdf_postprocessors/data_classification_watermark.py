@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class DataClassificationWatermarkPostProcessor(PdfPostProcessor):
-    def __init__(self, converter_instance: Any):
-        super().__init__(converter_instance)
+    def __init__(self, converter_instance: Any, priority: int = 100):
+        super().__init__(converter_instance, priority)
         self.logger = logging.getLogger(__name__)
 
-    def apply_modifications(self, pdf_path: str, options: Dict) -> None:
+    def process(self, pdf_path: str, options: Dict) -> None:
         data_classification = options.get("data_classification", "").upper()
 
         if data_classification not in ["CONFIDENTIAL", "RESTRICTED", "SECRET"]:

@@ -185,7 +185,7 @@ class MarkdownToPdfConverter:
                 else ""
             )
             header_post_processor = PyMuPdfHeaderPostProcessor(self)
-            header_post_processor.apply_modifications(
+            header_post_processor.process(
                 self.output_file, {"header_text": header_text, "use_header": True}
             )
             logger.info("PyMuPDF header post-processing complete.")
@@ -202,7 +202,7 @@ class MarkdownToPdfConverter:
                 else ""
             )
             footer_post_processor = PyMuPdfFooterPostProcessor(self)
-            footer_post_processor.apply_modifications(
+            footer_post_processor.process(
                 self.output_file, {"footer_text": footer_text, "use_footer": True}
             )
             logger.info("PyMuPDF footer post-processing complete.")
@@ -216,7 +216,7 @@ class MarkdownToPdfConverter:
                 "Starting DraftWatermark post-processing (draft mode detected)..."
             )
             draft_watermark_post_processor = DraftWatermarkPostProcessor(self)
-            draft_watermark_post_processor.apply_modifications(self.output_file, {})
+            draft_watermark_post_processor.process(self.output_file, {})
             logger.info("DraftWatermark post-processing complete.")
         else:
             logger.info("DraftWatermark post-processing skipped (not in draft mode).")
@@ -229,7 +229,7 @@ class MarkdownToPdfConverter:
             data_classification_watermark_post_processor = (
                 DataClassificationWatermarkPostProcessor(self)
             )
-            data_classification_watermark_post_processor.apply_modifications(
+            data_classification_watermark_post_processor.process(
                 self.output_file, {"data_classification": data_classification}
             )
             logger.info("DataClassificationWatermark post-processing complete.")
@@ -243,7 +243,7 @@ class MarkdownToPdfConverter:
         if metadata_list:
             logger.info("Starting MetadataPostProcessor...")
             metadata_post_processor = MetadataPostProcessor(self)
-            metadata_post_processor.apply_modifications(
+            metadata_post_processor.process(
                 self.output_file, {"metadata_list": metadata_list}
             )
             logger.info("MetadataPostProcessor complete.")

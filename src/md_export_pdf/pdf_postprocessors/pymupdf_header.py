@@ -8,11 +8,11 @@ from .base import PdfPostProcessor
 
 
 class PyMuPdfHeaderPostProcessor(PdfPostProcessor):
-    def __init__(self, converter_instance: Any):
-        super().__init__(converter_instance)
+    def __init__(self, converter_instance: Any, priority: int = 10):
+        super().__init__(converter_instance, priority)
         self.logger = logging.getLogger(__name__)
 
-    def apply_modifications(self, pdf_path: str, options: Dict) -> None:
+    def process(self, pdf_path: str, options: Dict) -> None:
         header_text = options.get("header_text", "")
         use_header = options.get("use_header", False)
 
