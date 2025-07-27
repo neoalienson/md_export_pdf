@@ -2,6 +2,10 @@
 
 This `markdown-to-pdf` project is a Python tool designed to convert Markdown files into PDF documents. It supports advanced features such as CSS-driven styling, custom headers and footers with page numbering, automatic Table of Contents generation, and conversion of Mermaid.js diagrams into images embedded within the PDF. This tool is specifically designed for **document as code** and **diagram as code** users, aiming for compatibility with document repositories and platforms like Confluence.
 
+## Default Styling
+
+The default CSS styling for the PDF output is now located in `src/md_export_pdf/styles/default.css`. This file contains base styles for elements, page numbering, and specific adjustments for code blocks and the Table of Contents.
+
 ## Key Features for Gemini CLI Interaction
 
 - **Markdown to PDF Conversion:** The primary function is to take a Markdown file and produce a PDF.
@@ -31,6 +35,7 @@ When interacting with this project, consider the following:
     - Missing input files.
     - Invalid CSS file paths.
     - Issues with `mmdc` (e.g., not found, rendering errors).
+    - **WeasyPrint Dependencies (Windows):** If you encounter an `OSError` related to `libgobject-2.0-0` or other missing libraries, you may need to install GTK3 on your system. Refer to the WeasyPrint installation documentation for details: `https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#installation`
 - **Testing:** Use `pytest` to run tests located in the `tests/` directory.
 
 ## Markdown to HTML Conversion Analysis and Strategy

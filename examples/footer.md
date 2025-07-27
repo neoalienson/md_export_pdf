@@ -1,3 +1,1 @@
-### Document Footer
-
 Page {page_num} of {total_pages} | Generated on July 23, 2025

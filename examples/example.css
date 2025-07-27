@@ -31,6 +31,19 @@ pre {
 }
 
 /* Header and Footer Styling */
+@page {
+    @top-center {
+        content: element(header);
+        font-size: 10pt;
+        color: #666;
+    }
+    @bottom-center {
+        content: element(footer);
+        font-size: 9pt;
+        color: #999;
+        min-height: fit-content; 
+    }
+}
 
 .document-header {
     text-align: center;

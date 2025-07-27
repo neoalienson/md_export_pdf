@@ -1,4 +1,4 @@
-# src/markdown_to_pdf/cli.py
+# src/md_export_pdf/cli.py
 
 import argparse
 import logging
@@ -28,34 +28,31 @@ def main():
 
     parser.add_argument("--cover-page", help="Path to a Markdown file for the cover page.")
     parser.add_argument("--cover-css", help="Path to a CSS file for cover page styling.")
+    parser.add_argument("--use-pymupdf-header", action="store_true", help="Use PyMuPDF for header generation.")
+    parser.add_argument("--use-pymupdf-footer", action="store_true", help="Use PyMuPDF for footer generation.")
+    parser.add_argument("--use-dummy-postprocessor", action="store_true", help="Use a dummy post-processor for testing.")
 
     parser.add_argument("--log-level", default="ERROR", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], help="Set the logging level.")
 
     args = parser.parse_args()
 
-    # Set logging level based on argument
-    logger.setLevel(getattr(logging, args.log_level.upper()))
-
-    logger.debug(f"CLI arguments parsed: {args}")
-    logger.info(f"Starting Markdown to PDF conversion for '{args.input_file}'")
-    try:
-        converter = MarkdownToPdfConverter(
-            input_file=args.input_file,
-            output_file=args.output,
-            css_file=args.style,
-            header_content=args.header,
-            header_file=args.header_file,
-            header_css=args.header_css,
-            footer_content=args.footer,
-            footer_file=args.footer_file,
-            footer_css=args.footer_css,
-            cover_page_file=args.cover_page,
-            cover_css=args.cover_css
-        )
-        converter.convert()
-        logger.info("Markdown to PDF conversion completed successfully.")
-    except Exception as e:
-        logger.error(f"An error occurred during conversion: {e}", exc_info=True)
+    converter = MarkdownToPdfConverter(
+        input_file=args.input_file,
+        output_file=args.output,
+        css_file=args.style,
+        header_content=args.header,
+        header_file=args.header_file,
+        header_css=args.header_css,
+        footer_content=args.footer,
+        footer_file=args.footer_file,
+        footer_css=args.footer_css,
+        cover_page_file=args.cover_page,
+        cover_css=args.cover_css,
+        use_pymupdf_header=args.use_pymupdf_header,
+        use_pymupdf_footer=args.use_pymupdf_footer,
+        use_dummy_postprocessor=args.use_dummy_postprocessor
+    )
+    converter.convert()
 
 if __name__ == "__main__":
     main()
