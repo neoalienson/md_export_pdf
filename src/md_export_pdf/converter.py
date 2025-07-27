@@ -184,20 +184,26 @@ class MarkdownToPdfConverter:
                 options = {}
                 if isinstance(pp_instance, PyMuPdfHeaderPostProcessor):
                     options["header_text"] = self.header_content or (
-                        self._read_file_content(self.header_file, markdown_convert=False)
+                        self._read_file_content(
+                            self.header_file, markdown_convert=False
+                        )
                         if self.header_file
                         else ""
                     )
                     options["use_header"] = True
                 elif isinstance(pp_instance, PyMuPdfFooterPostProcessor):
                     options["footer_text"] = self.footer_content or (
-                        self._read_file_content(self.footer_file, markdown_convert=False)
+                        self._read_file_content(
+                            self.footer_file, markdown_convert=False
+                        )
                         if self.footer_file
                         else ""
                     )
                     options["use_footer"] = True
                 elif isinstance(pp_instance, DataClassificationWatermarkPostProcessor):
-                    options["data_classification"] = front_matter_data.get("data_classification")
+                    options["data_classification"] = front_matter_data.get(
+                        "data_classification"
+                    )
                 elif isinstance(pp_instance, MetadataPostProcessor):
                     options["metadata_list"] = front_matter_data.get("metadata", [])
 

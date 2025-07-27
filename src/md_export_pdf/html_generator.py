@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 from .config import MARKDOWN_PREPROCESSOR_PIPELINE
 from .md_preprocessor.front_matter import FrontMatterProcessor
 
+
 def convert_markdown_to_html(md_content):
     logger.info("Starting Markdown to HTML conversion.")
 
@@ -19,10 +20,14 @@ def convert_markdown_to_html(md_content):
 
     for processor_instance in sorted_processors:
         if isinstance(processor_instance, FrontMatterProcessor):
-            current_md_content, front_matter_data = processor_instance.process_markdown(current_md_content)
+            current_md_content, front_matter_data = processor_instance.process_markdown(
+                current_md_content
+            )
         else:
             current_md_content = processor_instance.process_markdown(current_md_content)
-        logger.debug(f"Applied Markdown pre-processor: {processor_instance.__class__.__name__}")
+        logger.debug(
+            f"Applied Markdown pre-processor: {processor_instance.__class__.__name__}"
+        )
 
     logger.debug("Performing basic Markdown to HTML conversion.")
     md = markdown.Markdown(

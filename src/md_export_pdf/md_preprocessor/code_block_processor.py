@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 # Dictionary to store metadata for code blocks
 _code_block_metadata = {}
 
+
 class CodeBlockProcessor(MarkdownPreprocessor):
     def __init__(self, priority: int = 30):
         super().__init__(priority)
@@ -39,12 +40,16 @@ class CodeBlockProcessor(MarkdownPreprocessor):
             linenums = False
 
             if attributes_str_on_line:
-                if attributes_str_on_line.startswith("{") and attributes_str_on_line.endswith("}"):
+                if attributes_str_on_line.startswith(
+                    "{"
+                ) and attributes_str_on_line.endswith("}"):
                     clean_attributes_str = attributes_str_on_line.strip("{}").strip()
                 else:
                     clean_attributes_str = attributes_str_on_line
 
-                title_match = re.search(r'title="([^"]*)"|\'title\'', clean_attributes_str)
+                title_match = re.search(
+                    r'title="([^"]*)"|\'title\'', clean_attributes_str
+                )
                 if title_match:
                     title = (
                         title_match.group(1)

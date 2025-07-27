@@ -5,6 +5,7 @@ from ..base_processor import MarkdownPreprocessor
 
 logger = logging.getLogger(__name__)
 
+
 class FrontMatterProcessor(MarkdownPreprocessor):
     def __init__(self, priority: int = 10):
         super().__init__(priority)
