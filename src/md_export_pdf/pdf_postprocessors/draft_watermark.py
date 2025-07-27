@@ -16,6 +16,9 @@ class DraftWatermarkPostProcessor(PdfPostProcessor):
         super().__init__(converter_instance, priority)
         self.logger = logging.getLogger(__name__)
 
+    def should_apply(self, converter_instance: Any, front_matter_data: Dict) -> bool:
+        return front_matter_data.get("draft", False)
+
     def process(self, pdf_path: str, options: Dict) -> None:
         self.logger.debug(
             f"DraftWatermarkPostProcessor: Applying watermark to {pdf_path}"

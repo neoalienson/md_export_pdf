@@ -9,6 +9,15 @@ class PdfPostProcessor(BaseProcessor):
         self.converter = converter_instance
 
     @abstractmethod
+    @abstractmethod
+    def should_apply(self, converter_instance: Any, front_matter_data: Dict) -> bool:
+        """
+        Determines if this post-processor should be applied based on converter settings
+        and front matter data.
+        """
+        pass
+
+    @abstractmethod
     def process(self, pdf_path: str, options: Dict) -> None:
         """
         Applies modifications to the PDF at the given path.

@@ -12,6 +12,11 @@ class PyMuPdfHeaderPostProcessor(PdfPostProcessor):
         super().__init__(converter_instance, priority)
         self.logger = logging.getLogger(__name__)
 
+    def should_apply(self, converter_instance: Any, front_matter_data: Dict) -> bool:
+        return converter_instance.use_pymupdf_header and (
+            converter_instance.header_content or converter_instance.header_file
+        )
+
     def process(self, pdf_path: str, options: Dict) -> None:
         header_text = options.get("header_text", "")
         use_header = options.get("use_header", False)

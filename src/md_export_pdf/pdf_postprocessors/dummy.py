@@ -10,6 +10,9 @@ class DummyPostProcessor(PdfPostProcessor):
         self.logger = logging.getLogger(__name__)
         self.logger.info("DummyPostProcessor initialized.")
 
+    def should_apply(self, converter_instance: Any, front_matter_data: Dict) -> bool:
+        return converter_instance.use_dummy_postprocessor
+
     def process(self, pdf_path: str, options: Dict) -> None:
         self.logger.info(
             f"DummyPostProcessor: apply_modifications called for {pdf_path} with options: {options}"

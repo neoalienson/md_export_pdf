@@ -168,82 +168,40 @@ class MarkdownToPdfConverter:
             logger.error(traceback.format_exc())
             raise  # Re-raise the exception to stop execution
 
-        # Determine and initialize PDF post-processor
-        logger.debug(f"PyMuPDF header toggle: {self.use_pymupdf_header}")
-        logger.debug(f"PyMuPDF footer toggle: {self.use_pymupdf_footer}")
-        logger.debug(f"Header content: '{self.header_content}'")
-        logger.debug(f"Footer content: '{self.footer_content}'")
-        logger.debug(f"Header file: '{self.header_file}'")
-        logger.debug(f"Footer file: '{self.footer_file}'")
-        if self.use_pymupdf_header and (self.header_content or self.header_file):
-            logger.info("Starting PyMuPDF header post-processing...")
-            header_text = self.header_content or (
-                self._read_file_content(self.header_file, markdown_convert=False)
-                if self.header_file
-                else ""
-            )
-            header_post_processor = PyMuPdfHeaderPostProcessor(self)
-            header_post_processor.process(
-                self.output_file, {"header_text": header_text, "use_header": True}
-            )
-            logger.info("PyMuPDF header post-processing complete.")
-        else:
-            logger.info(
-                "PyMuPDF header post-processing skipped (not toggled or no content)."
-            )
+        post_processors = [
+            PyMuPdfHeaderPostProcessor,
+            PyMuPdfFooterPostProcessor,
+            DummyPostProcessor,
+            DataClassificationWatermarkPostProcessor,
+            DraftWatermarkPostProcessor,
+            MetadataPostProcessor,
+        ]
 
-        if self.use_pymupdf_footer and (self.footer_content or self.footer_file):
-            logger.info("Starting PyMuPDF footer post-processing...")
-            footer_text = self.footer_content or (
-                self._read_file_content(self.footer_file, markdown_convert=False)
-                if self.footer_file
-                else ""
-            )
-            footer_post_processor = PyMuPdfFooterPostProcessor(self)
-            footer_post_processor.process(
-                self.output_file, {"footer_text": footer_text, "use_footer": True}
-            )
-            logger.info("PyMuPDF footer post-processing complete.")
-        else:
-            logger.info(
-                "PyMuPDF footer post-processing skipped (not toggled or no content)."
-            )
+        for pp_class in sorted(post_processors, key=lambda x: x(self).priority):
+            pp_instance = pp_class(self)
+            if pp_instance.should_apply(self, front_matter_data):
+                logger.info(f"Applying PDF post-processor: {pp_class.__name__}...")
+                options = {}
+                if isinstance(pp_instance, PyMuPdfHeaderPostProcessor):
+                    options["header_text"] = self.header_content or (
+                        self._read_file_content(self.header_file, markdown_convert=False)
+                        if self.header_file
+                        else ""
+                    )
+                    options["use_header"] = True
+                elif isinstance(pp_instance, PyMuPdfFooterPostProcessor):
+                    options["footer_text"] = self.footer_content or (
+                        self._read_file_content(self.footer_file, markdown_convert=False)
+                        if self.footer_file
+                        else ""
+                    )
+                    options["use_footer"] = True
+                elif isinstance(pp_instance, DataClassificationWatermarkPostProcessor):
+                    options["data_classification"] = front_matter_data.get("data_classification")
+                elif isinstance(pp_instance, MetadataPostProcessor):
+                    options["metadata_list"] = front_matter_data.get("metadata", [])
 
-        if front_matter_data.get("draft", False):
-            logger.info(
-                "Starting DraftWatermark post-processing (draft mode detected)..."
-            )
-            draft_watermark_post_processor = DraftWatermarkPostProcessor(self)
-            draft_watermark_post_processor.process(self.output_file, {})
-            logger.info("DraftWatermark post-processing complete.")
-        else:
-            logger.info("DraftWatermark post-processing skipped (not in draft mode).")
-
-        data_classification = front_matter_data.get("data_classification")
-        if data_classification:
-            logger.info(
-                f"Starting DataClassificationWatermark post-processing (classification: {data_classification})..."
-            )
-            data_classification_watermark_post_processor = (
-                DataClassificationWatermarkPostProcessor(self)
-            )
-            data_classification_watermark_post_processor.process(
-                self.output_file, {"data_classification": data_classification}
-            )
-            logger.info("DataClassificationWatermark post-processing complete.")
-        else:
-            logger.info(
-                "DataClassificationWatermark post-processing skipped (no classification specified)."
-            )
-
-        # Apply metadata from front matter
-        metadata_list = front_matter_data.get("metadata", [])
-        if metadata_list:
-            logger.info("Starting MetadataPostProcessor...")
-            metadata_post_processor = MetadataPostProcessor(self)
-            metadata_post_processor.process(
-                self.output_file, {"metadata_list": metadata_list}
-            )
-            logger.info("MetadataPostProcessor complete.")
-        else:
-            logger.info("No metadata found in front matter to apply.")
+                pp_instance.process(self.output_file, options)
+                logger.info(f"PDF post-processor {pp_class.__name__} applied.")
+            else:
+                logger.debug(f"PDF post-processor {pp_class.__name__} skipped.")

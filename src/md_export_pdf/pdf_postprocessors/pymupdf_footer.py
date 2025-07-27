@@ -12,6 +12,11 @@ class PyMuPdfFooterPostProcessor(PdfPostProcessor):
         super().__init__(converter_instance, priority)
         self.logger = logging.getLogger(__name__)
 
+    def should_apply(self, converter_instance: Any, front_matter_data: Dict) -> bool:
+        return converter_instance.use_pymupdf_footer and (
+            converter_instance.footer_content or converter_instance.footer_file
+        )
+
     def process(self, pdf_path: str, options: Dict) -> None:
         footer_text = options.get("footer_text", "")
         use_footer = options.get("use_footer", False)

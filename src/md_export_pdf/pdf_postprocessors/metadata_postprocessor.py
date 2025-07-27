@@ -13,6 +13,9 @@ class MetadataPostProcessor(PdfPostProcessor):
         super().__init__(converter_instance, priority)
         self.logger = logging.getLogger(__name__)
 
+    def should_apply(self, converter_instance: Any, front_matter_data: Dict) -> bool:
+        return bool(front_matter_data.get("metadata"))
+
     def process(self, pdf_path: str, options: Dict) -> None:
         metadata_list = options.get("metadata_list", [])
         if not metadata_list:
