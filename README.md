@@ -48,6 +48,39 @@ This project implements a pluggable system for PDF post-processing, allowing for
 
 This modular design allows for easy integration of new PDF manipulation functionalities or alternative libraries in the future.
 
+### Processing Flowchart
+
+```mermaid
+graph TD
+    A[Markdown Input] --> B{Front Matter Extraction};
+    B --> C{Mermaid Processing};
+    C --> D[Markdown to HTML Conversion];
+    D --> E{HTML Template Application};
+    E --> F[WeasyPrint HTML to PDF Conversion];
+    F[WeasyPrint HTML to PDF Conversion];
+
+    subgraph PDF Post-processors
+        direction LR
+        G_start((Start Post-processing)) --> G1[PyMuPDF Header Post-processor];
+        G1 --> G2[PyMuPDF Footer Post-processor];
+        G2 --> G3[Draft Watermark Post-processor];
+        G3 --> G4[Data Classification Watermark Post-processor];
+        G4 --> G5[Metadata Post-processor];
+        G5 --> G_end((End Post-processing));
+    end
+
+    F --> G_start;
+    G_end --> H[PDF Output];
+
+    subgraph HTML Template Application
+        E1[Cover Page Injection]
+        E2[WeasyPrint Header/Footer Injection]
+    end
+
+    E --> E1;
+    E --> E2;
+```
+
 ## Development
 
 To set up the development environment:
