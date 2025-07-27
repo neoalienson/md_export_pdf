@@ -6,6 +6,7 @@ from . import html_generator
 from . import template_renderer
 from . import logger
 from . import style_manager
+from .pdf_preprocessors.write_html_for_debug import write_html_for_debug
 
 class MarkdownToPdfConverter:
     def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None):
@@ -62,7 +63,7 @@ class MarkdownToPdfConverter:
         elif self.header_file:
             header_md_content = utils.read_file_content(self.header_file)
             if header_md_content:
-                md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc', 'attr_list', 'tables'])
+                md = markdown.Markdown(extensions=['extra', 'codehilite', 'attr_list', 'tables'])
                 header_html = md.convert(header_md_content)
                 logger.info("Header HTML generated.")
             else:
@@ -75,17 +76,14 @@ class MarkdownToPdfConverter:
         elif self.footer_file:
             footer_md_content = utils.read_file_content(self.footer_file)
             if footer_md_content:
-                md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc', 'attr_list', 'tables'])
+                md = markdown.Markdown(extensions=['extra', 'codehilite', 'attr_list', 'tables'])
                 footer_html = md.convert(footer_md_content)
                 logger.info("Footer HTML generated.")
             else:
                 logger.warning(f"Footer file not found or empty: {self.footer_file}")
 
         # Debug: Save main_html to a temporary file
-        debug_html_path = self.output_file.replace(".pdf", ".debug.html")
-        with open(debug_html_path, "w", encoding="utf-8") as f:
-            f.write(main_html)
-        logger.info(f"Debug HTML saved to: {debug_html_path}")
+        write_html_for_debug(main_html, self.output_file)
 
         # Load CSS content
         all_stylesheets = style_manager.get_stylesheets(
