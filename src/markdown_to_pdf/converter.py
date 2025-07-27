@@ -5,13 +5,17 @@ import markdown
 from weasyprint import HTML, CSS
 from bs4 import BeautifulSoup
 import os
-import fitz # Import PyMuPDF
+from typing import Optional, Type
+import fitz # Import fitz for PyMuPDF operations
 from .markdown_processor import convert_markdown_to_html
+from .pdf_postprocessors.base import PdfPostProcessor
+from .pdf_postprocessors.pymupdf_postprocessor import PyMuPdfPostProcessor
+from .pdf_postprocessors.dummy_postprocessor import DummyPostProcessor
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 class MarkdownToPdfConverter:
-    def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None, use_pymupdf_header: bool = False, use_pymupdf_footer: bool = False):
+    def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None, use_pymupdf_header: bool = False, use_pymupdf_footer: bool = False, use_dummy_postprocessor: bool = False):
         self.input_file = input_file
         self.output_file = output_file
         self.css_file = css_file
@@ -25,6 +29,8 @@ class MarkdownToPdfConverter:
         self.cover_css = cover_css
         self.use_pymupdf_header = use_pymupdf_header
         self.use_pymupdf_footer = use_pymupdf_footer
+        self.use_dummy_postprocessor = use_dummy_postprocessor # New attribute
+        self.post_processor: Optional[PdfPostProcessor] = None # New attribute
 
     def _read_file_content(self, file_path, markdown_convert: bool = True):
         logging.debug(f"Reading file content from: {file_path}, Markdown conversion: {markdown_convert}")
@@ -151,7 +157,7 @@ class MarkdownToPdfConverter:
             if self.use_pymupdf_header and header_text:
                 logging.debug(f"Attempting to add PyMuPDF header to page {i+1}. Text: '{header_text}'")
                 try:
-                    page.insert_text((50, 50), header_text, fontname=font_name, fontsize=10)
+                    page.insert_text((50, 50), header_text, fontname="helv", fontsize=10)
                     logging.debug(f"PyMuPDF header added successfully to page {i+1}.")
                 except Exception as e:
                     logging.error(f"Error adding PyMuPDF header to page {i+1}: {e}")
@@ -163,7 +169,7 @@ class MarkdownToPdfConverter:
                 logging.debug(f"Attempting to add PyMuPDF footer to page {i+1}. Text: '{footer_text}'")
                 try:
                     footer_y = page.rect.height - 50
-                    page.insert_text((50, footer_y), footer_text.format(page_num=i + 1, total_pages=num_pages), fontname=font_name, fontsize=10)
+                    page.insert_text((50, footer_y), footer_text.format(page_num=i + 1, total_pages=num_pages), fontname="helv", fontsize=10)
                     logging.debug(f"PyMuPDF footer added successfully to page {i+1}.")
                 except Exception as e:
                     logging.error(f"Error adding PyMuPDF footer to page {i+1}: {e}")
@@ -229,7 +235,7 @@ class MarkdownToPdfConverter:
             logging.error(traceback.format_exc())
             raise # Re-raise the exception to stop execution
 
-        # Add headers and footers using PyMuPDF after initial PDF generation if toggled
+        # Determine and initialize PDF post-processor
         logging.debug(f"PyMuPDF header toggle: {self.use_pymupdf_header}")
         logging.debug(f"PyMuPDF footer toggle: {self.use_pymupdf_footer}")
         logging.debug(f"Header content: '{self.header_content}'")

@@ -16,6 +16,15 @@ The default CSS styling for the PDF output is now located in `src/markdown_to_pd
 - **Code Blocks:** Supports code syntax highlighting with Confluence-like titles and line numbers.
 - **Mermaid.js Support:** The tool automatically renders Mermaid.js code blocks into images. This relies on the `mmdc` (Mermaid CLI) tool being installed and accessible in the system's PATH. You can install it via `npm install -g @mermaid-js/mermaid-cli`.
 
+## Pluggable PDF Post-processing
+
+This project implements a pluggable system for PDF post-processing, allowing for flexible modifications to the generated PDF after the initial conversion by WeasyPrint. This system is built around the `PdfPostProcessor` abstract base class, which defines a standard interface for applying modifications.
+
+-   **`PyMuPdfPostProcessor`**: This is a concrete implementation that leverages PyMuPDF for tasks like adding headers and footers. It is used when `--use-pymupdf-header` or `--use-pymupdf-footer` options are enabled.
+-   **`DummyPostProcessor`**: A simple implementation for testing and validation purposes. It performs no actual modifications but logs its execution. It can be enabled using the `--use-dummy-postprocessor` CLI option.
+
+This modular design allows for easy integration of new PDF manipulation functionalities or alternative libraries in the future.
+
 ## API Handling Strategies and Error Handling Table
 
 | Tool Name                       | API Handling Strategy Type                          | Validated |

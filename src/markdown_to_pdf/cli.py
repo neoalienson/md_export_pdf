@@ -28,6 +28,7 @@ def main():
     parser.add_argument("--cover-css", help="Path to a CSS file for cover page styling.")
     parser.add_argument("--use-pymupdf-header", action="store_true", help="Use PyMuPDF for header generation.")
     parser.add_argument("--use-pymupdf-footer", action="store_true", help="Use PyMuPDF for footer generation.")
+    parser.add_argument("--use-dummy-postprocessor", action="store_true", help="Use a dummy post-processor for testing.")
 
     args = parser.parse_args()
 
@@ -44,7 +45,8 @@ def main():
         cover_page_file=args.cover_page,
         cover_css=args.cover_css,
         use_pymupdf_header=args.use_pymupdf_header,
-        use_pymupdf_footer=args.use_pymupdf_footer
+        use_pymupdf_footer=args.use_pymupdf_footer,
+        use_dummy_postprocessor=args.use_dummy_postprocessor
     )
     converter.convert()
 
