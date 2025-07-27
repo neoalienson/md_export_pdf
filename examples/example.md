@@ -1,6 +1,7 @@
 ---
 title: front matter
 draft: true
+data_classification: CONFIDENTIAL
 ---
 
 # My Example Document

@@ -13,6 +13,7 @@ from .pdf_postprocessors.base import PdfPostProcessor
 from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
 from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
 from .pdf_postprocessors.dummy import DummyPostProcessor
+from .pdf_postprocessors.data_classification_watermark import DataClassificationWatermarkPostProcessor
 from .pdf_postprocessors.draft_watermark import DraftWatermarkPostProcessor
 
 logger = logging.getLogger(__name__)
@@ -213,9 +214,18 @@ class MarkdownToPdfConverter:
 
         if front_matter_data.get('draft', False):
             logger.info("Starting DraftWatermark post-processing (draft mode detected)...")
-            watermark_post_processor = DraftWatermarkPostProcessor(self)
-            watermark_post_processor.apply_modifications(self.output_file, {})
-            logger.info("Watermark post-processing complete.")
+            draft_watermark_post_processor = DraftWatermarkPostProcessor(self)
+            draft_watermark_post_processor.apply_modifications(self.output_file, {})
+            logger.info("DraftWatermark post-processing complete.")
         else:
-            logger.info("Watermark post-processing skipped (not in draft mode).")
+            logger.info("DraftWatermark post-processing skipped (not in draft mode).")
+
+        data_classification = front_matter_data.get('data_classification')
+        if data_classification:
+            logger.info(f"Starting DataClassificationWatermark post-processing (classification: {data_classification})...")
+            data_classification_watermark_post_processor = DataClassificationWatermarkPostProcessor(self)
+            data_classification_watermark_post_processor.apply_modifications(self.output_file, {'data_classification': data_classification})
+            logger.info("DataClassificationWatermark post-processing complete.")
+        else:
+            logger.info("DataClassificationWatermark post-processing skipped (no classification specified).")
 

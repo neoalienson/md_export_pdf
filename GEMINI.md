@@ -13,6 +13,7 @@ The default CSS styling for the PDF output is now located in `src/md_export_pdf/
 - **Headers/Footers:** Headers and footers can be specified either directly as content or from a Markdown/HTML file. A key requirement is that these headers and footers must appear on *every* content page of the generated PDF, not just the first or last. They also support independent CSS styling and dynamic page numbering, including placeholders for current page number and total pages (excluding the cover page).
 - **Table of Contents:** Automatically generates a clickable Table of Contents.
 - **Cover Page:** Supports adding a cover page from a separate Markdown file, which can also be styled via CSS using the `--cover-css` option.
+- **Data Classification Watermark:** Adds a watermark (CONFIDENTIAL, RESTRICTED, or SECRET) in red to each page if `data_classification` is specified in the Markdown file's front matter.
 - **Code Blocks:** Supports code syntax highlighting with Confluence-like titles and line numbers.
 - **Mermaid.js Support:** The tool automatically renders Mermaid.js code blocks into images. This relies on the `mmdc` (Mermaid CLI) tool being installed and accessible in the system's PATH. You can install it via `npm install -g @mermaid-js/mermaid-cli`.
 
