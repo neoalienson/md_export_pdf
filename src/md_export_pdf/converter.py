@@ -16,6 +16,7 @@ from .pdf_postprocessors.dummy import DummyPostProcessor
 from .pdf_postprocessors.data_classification_watermark import DataClassificationWatermarkPostProcessor
 from .pdf_postprocessors.draft_watermark import DraftWatermarkPostProcessor
 from .pdf_postprocessors.metadata_postprocessor import MetadataPostProcessor
+from .html_preprocessors.weasyprint_header_footer import apply_weasyprint_header_footer
 
 logger = logging.getLogger(__name__)
 
@@ -94,41 +95,8 @@ class MarkdownToPdfConverter:
             cover_page_div.append(BeautifulSoup(cover_page_html, 'html.parser'))
             soup.body.insert(0, cover_page_div)
 
-        # Populate header content if using WeasyPrint for headers
-        if not self.use_pymupdf_header:
-            logger.debug("Populating WeasyPrint header content.")
-            header_html_content = self.header_content
-            if self.header_file:
-                file_content = self._read_file_content(self.header_file)
-                if file_content is not None:
-                    header_html_content = file_content
-
-            if header_html_content:
-                # Create a div for the header content and insert it at the beginning of the body
-                header_element = soup.new_tag("div", id="pdf-header", class_="document-header")
-                header_element.append(BeautifulSoup(header_html_content, 'html.parser'))
-                soup.body.insert(1, header_element) # Insert after cover page if present, or at beginning
-                logger.debug("WeasyPrint header content appended.")
-
-        # Populate footer content with page number placeholders if using WeasyPrint for footers
-        if not self.use_pymupdf_footer:
-            logger.debug("Populating WeasyPrint footer content.")
-            footer_html_content = self.footer_content
-            if self.footer_file:
-                file_content = self._read_file_content(self.footer_file)
-                if file_content is not None:
-                    footer_html_content = file_content
-
-            if footer_html_content:
-                # Replace placeholders for page numbering
-                footer_html = footer_html_content.replace('{page_num}', '<span class="page-number"></span>')
-                footer_html = footer_html.replace('{total_pages}', '<span class="total-pages"></span>')
-
-                # Create a div for the footer content and append it to the body
-                footer_element = soup.new_tag("div", id="pdf-footer", class_="document-footer")
-                footer_element.append(BeautifulSoup(footer_html, 'html.parser'))
-                soup.body.append(footer_element)
-                logger.debug("WeasyPrint footer content appended.")
+        # Apply WeasyPrint headers and footers
+        apply_weasyprint_header_footer(soup, self)
 
         logger.debug("HTML template application complete. Returning string representation.")
         return str(soup)
