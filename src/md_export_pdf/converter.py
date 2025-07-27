@@ -19,6 +19,7 @@ from .pdf_postprocessors.data_classification_watermark import (
 from .pdf_postprocessors.draft_watermark import DraftWatermarkPostProcessor
 from .pdf_postprocessors.metadata_postprocessor import MetadataPostProcessor
 from .html_preprocessors.weasyprint_header_footer import apply_weasyprint_header_footer
+from .html_preprocessors.cover_page_processor import apply_cover_page
 
 logger = logging.getLogger(__name__)
 
@@ -77,14 +78,6 @@ class MarkdownToPdfConverter:
         with open(self.input_file, "r", encoding="utf-8") as f:
             return f.read()
 
-    def _convert_cover_page_to_html(self):
-        if not self.cover_page_file or not os.path.exists(self.cover_page_file):
-            return ""
-        with open(self.cover_page_file, "r", encoding="utf-8") as f:
-            md_content = f.read()
-        # Simple Markdown conversion for cover page, no TOC or Mermaid processing
-        return markdown.markdown(md_content)
-
     def _apply_html_template(self, html_content):
         logger.debug("Applying HTML template...")
         # Create a basic HTML structure for WeasyPrint
@@ -106,13 +99,8 @@ class MarkdownToPdfConverter:
         soup = BeautifulSoup(template_html, "html.parser")
         logger.debug("BeautifulSoup object created from template.")
 
-        # Insert cover page if provided
-        cover_page_html = self._convert_cover_page_to_html()
-        if cover_page_html:
-            logger.debug("Cover page HTML generated. Inserting into soup.")
-            cover_page_div = soup.new_tag("div", id="cover-page", class_="cover-page")
-            cover_page_div.append(BeautifulSoup(cover_page_html, "html.parser"))
-            soup.body.insert(0, cover_page_div)
+        # Apply cover page
+        apply_cover_page(soup, self)
 
         # Apply WeasyPrint headers and footers
         apply_weasyprint_header_footer(soup, self)
