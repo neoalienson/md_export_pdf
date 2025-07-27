@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 import os
 import subprocess
 from bs4 import BeautifulSoup
-from md_export_pdf.markdown_processor import convert_markdown_to_html, _convert_mermaid_to_image
+from md_export_pdf.md_processor.markdown import convert_markdown_to_html
 from markdown_to_pdf.converter import MarkdownToPdfConverter
 from weasyprint import HTML, CSS
 
@@ -34,7 +34,7 @@ def test_convert_markdown_to_html_basic_markdown():
     assert soup.find('h1', string='Hello World') is not None
     assert soup.find('strong', string='bold') is not None
 
-@patch('md_export_pdf.markdown_processor._convert_mermaid_to_image', return_value='/tmp/test_mermaid.png')
+@patch('md_export_pdf.md_processor.mermaid.convert_mermaid_to_image', return_value='/tmp/test_mermaid.png')
 def test_convert_markdown_to_html_with_mermaid(mock_convert_mermaid):
     md_content = "```mermaid\ngraph TD; A-->B;\n```"
     html = convert_markdown_to_html(md_content)

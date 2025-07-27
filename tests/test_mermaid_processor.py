@@ -1,5 +1,5 @@
 import pytest
-from markdown_to_pdf.mermaid_processor import process_mermaid_blocks
+from md_export_pdf.md_processor.mermaid import process_mermaid_blocks
 from markdown_to_pdf import utils
 
 # Mock the convert_mermaid_to_image function to avoid actual image conversion during tests
