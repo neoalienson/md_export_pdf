@@ -13,6 +13,7 @@ dependencies = [
     "Pillow", # For image processing
     "PyMuPDF", # For PDF generation
     "PyYAML", # For parsing YAML front matter
+    "markdown-sub-sup", # For superscript and subscript support
 ]
 requires-python = ">=3.8"
 readme = "README.md"
