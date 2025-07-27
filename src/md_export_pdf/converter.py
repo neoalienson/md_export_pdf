@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 import os
 from typing import Optional, Type
 import fitz # Import fitz for PyMuPDF operations
-from md_export_pdf.md_processor.markdown import convert_markdown_to_html
+from .md_processor.markdown import convert_markdown_to_html
+from .md_processor.front_matter import extract_front_matter
 from .pdf_postprocessors.base import PdfPostProcessor
 from .pdf_postprocessors.pymupdf_header import PyMuPdfHeaderPostProcessor
 from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
@@ -17,7 +18,7 @@ from .pdf_postprocessors.watermark import WatermarkPostProcessor
 logger = logging.getLogger(__name__)
 
 class MarkdownToPdfConverter:
-    def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None, use_pymupdf_header: bool = False, use_pymupdf_footer: bool = False, use_dummy_postprocessor: bool = False, use_watermark: bool = False):
+    def __init__(self, input_file, output_file, css_file=None, header_content=None, header_file=None, header_css=None, footer_content=None, footer_file=None, footer_css=None, cover_page_file=None, cover_css=None, use_pymupdf_header: bool = False, use_pymupdf_footer: bool = False, use_dummy_postprocessor: bool = False):
         self.input_file = input_file
         self.output_file = output_file
         self.css_file = css_file
@@ -32,7 +33,6 @@ class MarkdownToPdfConverter:
         self.use_pymupdf_header = use_pymupdf_header
         self.use_pymupdf_footer = use_pymupdf_footer
         self.use_dummy_postprocessor = use_dummy_postprocessor
-        self.use_watermark = use_watermark # New attribute
         self.post_processor: Optional[PdfPostProcessor] = None # New attribute
 
     def _read_file_content(self, file_path, markdown_convert: bool = True):
@@ -137,6 +137,7 @@ class MarkdownToPdfConverter:
         logger.info(f"Starting PDF conversion for '{self.input_file}' to '{self.output_file}'")
         md_content = self._read_markdown()
         logger.debug("Markdown content read.")
+        md_content, front_matter_data = extract_front_matter(md_content)
         html_content = convert_markdown_to_html(md_content)
         logger.debug("Markdown converted to HTML.")
         final_html = self._apply_html_template(html_content)
@@ -210,11 +211,11 @@ class MarkdownToPdfConverter:
         else:
             logger.info("PyMuPDF footer post-processing skipped (not toggled or no content).")
 
-        if self.use_watermark:
-            logger.info("Starting Watermark post-processing...")
+        if front_matter_data.get('draft', False):
+            logger.info("Starting Watermark post-processing (draft mode detected)...")
             watermark_post_processor = WatermarkPostProcessor(self)
             watermark_post_processor.apply_modifications(self.output_file, {})
             logger.info("Watermark post-processing complete.")
         else:
-            logger.info("Watermark post-processing skipped.")
+            logger.info("Watermark post-processing skipped (not in draft mode).")
 

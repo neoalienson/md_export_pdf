@@ -12,6 +12,7 @@ dependencies = [
     "requests", # For fetching external resources like images
     "Pillow", # For image processing
     "PyMuPDF", # For PDF generation
+    "PyYAML", # For parsing YAML front matter
 ]
 requires-python = ">=3.8"
 readme = "README.md"

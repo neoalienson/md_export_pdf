@@ -77,7 +77,7 @@ def preprocess_markdown_for_code_blocks(md_content):
 def convert_markdown_to_html(md_content):
     logger.info("Starting Markdown to HTML conversion.")
 
-    md_content = front_matter.remove_front_matter(md_content)
+    md_content, front_matter_data = front_matter.remove_front_matter(md_content)
     md_content = mermaid.process_mermaid_blocks(md_content)
 
     # Pre-process markdown to handle custom code block attributes
@@ -95,7 +95,9 @@ def convert_markdown_to_html(md_content):
     extracted_links = _extract_links_from_html(soup)
 
     logger.info("Markdown to HTML conversion completed.")
-    return str(soup), extracted_links
+    logger.debug(f"Returning: html_content_type={type(str(soup))}, extracted_links_type={type(extracted_links)}, front_matter_data_type={type(front_matter_data)}")
+    logger.debug(f"Returning: html_content_len={len(str(soup)) if isinstance(str(soup), str) else 'N/A'}, extracted_links_len={len(extracted_links) if isinstance(extracted_links, list) else 'N/A'}, front_matter_data_len={len(front_matter_data) if isinstance(front_matter_data, dict) else 'N/A'}")
+    return str(soup), extracted_links, front_matter_data
 
 def _extract_links_from_html(soup):
     links = []

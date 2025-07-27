@@ -66,30 +66,27 @@ def main():
 
     logger.info(f"Converting '{input_md_file}' to '{output_pdf_file}'...")
 
-    try:
-        converter = MarkdownToPdfConverter(
-            input_file=input_md_file,
-            output_file=output_pdf_file,
-            css_file=css_file,
-            # Use header/footer files and their CSS
-            header_file=None,
-            header_css=None,
-            footer_file=None,
-            footer_css=None,
-            # Use cover page file and its CSS
-            cover_page_file=cover_page_file,
-            # Hardcode PyMuPDF usage for header and footer
-            use_pymupdf_header=True,
-            use_pymupdf_footer=True,
-            header_content="My Hardcoded Header", # Example hardcoded header
-            footer_content="Page {page_num} of {total_pages}", # Example hardcoded footer
-            use_watermark=True,
-        )
-        converter.convert()
-        logger.info("Conversion complete!")
-        logger.info(f"You can find the generated PDF at: {output_pdf_file}")
-    except Exception as e:
-        logger.error(f"An error occurred during conversion: {e}")
+    converter = MarkdownToPdfConverter(
+        input_file=input_md_file,
+        output_file=output_pdf_file,
+        css_file=css_file,
+        # Use header/footer files and their CSS
+        header_file=None,
+        header_css=None,
+        footer_file=None,
+        footer_css=None,
+        # Use cover page file and its CSS
+        cover_page_file=cover_page_file,
+        # Hardcode PyMuPDF usage for header and footer
+        use_pymupdf_header=True,
+        use_pymupdf_footer=True,
+        header_content="My Hardcoded Header", # Example hardcoded header
+        footer_content="Page {page_num} of {total_pages}", # Example hardcoded footer
+        
+    )
+    converter.convert()
+    logger.info("Conversion complete!")
+    logger.info(f"You can find the generated PDF at: {output_pdf_file}")
 
 if __name__ == "__main__":
     main()
