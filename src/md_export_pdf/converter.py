@@ -15,6 +15,7 @@ from .pdf_postprocessors.pymupdf_footer import PyMuPdfFooterPostProcessor
 from .pdf_postprocessors.dummy import DummyPostProcessor
 from .pdf_postprocessors.data_classification_watermark import DataClassificationWatermarkPostProcessor
 from .pdf_postprocessors.draft_watermark import DraftWatermarkPostProcessor
+from .pdf_postprocessors.metadata_postprocessor import MetadataPostProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -232,24 +233,10 @@ class MarkdownToPdfConverter:
         # Apply metadata from front matter
         metadata_list = front_matter_data.get('metadata', [])
         if metadata_list:
-            logger.info("Applying metadata from front matter...")
-            doc = fitz.open(self.output_file)
-            pdf_metadata = doc.metadata
-            # Define a mapping of valid PyMuPDF metadata keys
-            # PyMuPDF expects keys like 'author', 'title', 'subject', 'keywords', 'creator', 'producer', 'creationDate', 'modDate'
-            valid_pymupdf_keys = ['author', 'title', 'subject', 'keywords', 'creator', 'producer', 'creationdate', 'moddate']
-
-            for item in metadata_list:
-                for key, value in item.items():
-                    lower_key = key.lower()
-                    if lower_key in valid_pymupdf_keys:
-                        pdf_metadata[lower_key] = value
-                    else:
-                        logger.warning(f"Skipping unsupported PDF metadata key: '{key}'. PyMuPDF only supports: {', '.join(valid_pymupdf_keys)}")
-            doc.set_metadata(pdf_metadata)
-            doc.saveIncr() # Save changes incrementally
-            doc.close()
-            logger.info("Metadata applied successfully.")
+            logger.info("Starting MetadataPostProcessor...")
+            metadata_post_processor = MetadataPostProcessor(self)
+            metadata_post_processor.apply_modifications(self.output_file, {'metadata_list': metadata_list})
+            logger.info("MetadataPostProcessor complete.")
         else:
             logger.info("No metadata found in front matter to apply.")
 
