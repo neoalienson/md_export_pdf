@@ -39,7 +39,7 @@ def convert_markdown_to_html(md_content):
             image_path = _convert_mermaid_to_image(mermaid_code)
             return f'<p><img src="{image_path}" alt="Mermaid Diagram"></p>'
         except Exception as e:
-            print(f"Error converting Mermaid diagram: {e}")
+            logger.error(f"Error converting Mermaid diagram: {e}")
             return f'<pre><code>{mermaid_code}</code></pre>' # Fallback to code block on error
 
     # Regex to find fenced code blocks for mermaid
