@@ -9,8 +9,8 @@ from typing import Optional, Type
 import fitz # Import fitz for PyMuPDF operations
 from md_export_pdf.markdown_processor import convert_markdown_to_html
 from .pdf_postprocessors.base import PdfPostProcessor
-from .pdf_postprocessors.pymupdf_postprocessor import PyMuPdfPostProcessor
-from .pdf_postprocessors.dummy_postprocessor import DummyPostProcessor
+from .pdf_postprocessors.pymupdf import PyMuPdfPostProcessor
+from .pdf_postprocessors.dummy import DummyPostProcessor
 
 logger = logging.getLogger(__name__)
 
